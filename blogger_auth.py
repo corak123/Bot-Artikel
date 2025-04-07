@@ -54,12 +54,12 @@ def get_authenticated_service():
     # Cek token yang sudah ada
     for token_file in os.listdir(token_dir):
         with open(os.path.join(token_dir, token_file), 'rb') as token:
-            temp_creds = pickle.load(token)
-            if temp_creds and temp_creds.valid:
-                return temp_creds
-            elif temp_creds and temp_creds.expired and temp_creds.refresh_token:
-                temp_creds.refresh(Request())
-                return temp_creds
+            temp_credentials = pickle.load(token)
+            if temp_credentials and temp_credentials.valid:
+                return temp_credentials
+            elif temp_credentials and temp_credentials.expired and temp_credentials.refresh_token:
+                temp_credentials.refresh(Request())
+                return temp_credentials
 
     # Jalankan login console
     st.warning("🔐 Salin dan buka link login Google di terminal. Setelah login, tempel kode otentikasi.")
