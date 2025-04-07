@@ -25,7 +25,10 @@ genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 #client = genai.Client(api_key=GEMINI_API_KEY)
 
 # Path ke file service account JSON
-SERVICE_ACCOUNT_FILE = "credentials.json"
+#SERVICE_ACCOUNT_FILE = "credentials.json"
+
+credentials_info = st.secrets["gcp_service_account"]
+credentials = service_account.Credentials.from_service_account_info(credentials_info)
 
 # Scope akses ke Google Drive
 SCOPES = ["https://www.googleapis.com/auth/drive.file"]
