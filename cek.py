@@ -74,9 +74,9 @@ BLOG_ID = "6869652925231981095"
 
 
 
-def post_to_blogger_with_creds(title, content, categories, creds):
+def post_to_blogger_with_creds(title, content, categories, credentials):
     try:
-        service = build('blogger', 'v3', credentials=creds)
+        service = build('blogger', 'v3', credentials=credentials)
         user_info = service.users().get(userId='self').execute()
         blog_id = service.blogs().listByUser(userId='self').execute()['items'][0]['id']
         
