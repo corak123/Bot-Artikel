@@ -102,7 +102,7 @@ if "credentials" not in st.session_state:
             st.session_state.user_email = user_info["email"]
             st.session_state.user_name = user_info["name"]
             st.session_state.user_picture = user_info["picture"]
-            save_credentials_to_pickle(creds, user_info["email"])
+            save_credentials_to_pickle(credentials, user_info["email"])
 
             st.success("✅ Berhasil login!")
             st.rerun()
