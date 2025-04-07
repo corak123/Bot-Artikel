@@ -55,7 +55,7 @@ def get_access_token():
 
 
 # Autentikasi dengan service account
-creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+#creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 service = build("drive", "v3", credentials=creds)
 print("Autentikasi berhasil!")
 
