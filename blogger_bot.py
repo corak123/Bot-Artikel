@@ -115,9 +115,9 @@ def show_login_prompt():
     st.info("🚪 Anda telah logout.")
     if st.button("🔐 Login dengan Google"):
         try:
-            creds = get_authenticated_service()
-            user_info = get_user_info(creds)
-            st.session_state.credentials = creds
+            credentials  = get_authenticated_service()
+            user_info = get_user_info(credentials )
+            st.session_state.credentials = credentials 
             st.session_state.user_email = user_info["email"]
             st.session_state.user_name = user_info["name"]
             st.session_state.user_picture = user_info["picture"]
@@ -139,13 +139,13 @@ if "credentials" not in st.session_state:
     st.info("🔐 Silakan login terlebih dahulu.")
     if st.button("🔐 Login dengan Google"):
         try:
-            creds = get_authenticated_service()
-            user_info = get_user_info(creds)
-            st.session_state.credentials = creds
+            credentials  = get_authenticated_service()
+            user_info = get_user_info(credentials )
+            st.session_state.credentials = credentials 
             st.session_state.user_email = user_info["email"]
             st.session_state.user_name = user_info["name"]
             st.session_state.user_picture = user_info["picture"]
-            save_credentials_to_pickle(creds, user_info["email"])
+            save_credentials_to_pickle(credentials , user_info["email"])
             st.success("✅ Login berhasil!")
             st.rerun()
         except Exception as e:
