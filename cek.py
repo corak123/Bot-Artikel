@@ -18,7 +18,8 @@ import requests
 import streamlit as st
 
 # Ganti dengan API Key kamu
-
+# Pakai API key dari secrets
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
 # Inisialisasi client
 client = genai.Client(api_key=GEMINI_API_KEY)
