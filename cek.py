@@ -198,8 +198,8 @@ def get_blog_categories():
         st.error("Anda harus login terlebih dahulu.")
         return []
     
-    creds = st.session_state.credentials
-    access_token = creds.token
+    credentials = st.session_state.credentials
+    access_token = credentials.token
 
     # Ambil blog ID user yang sedang login
     user_info_url = "https://www.googleapis.com/blogger/v3/users/self/blogs"
