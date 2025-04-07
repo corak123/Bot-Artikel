@@ -46,48 +46,76 @@ def save_credentials_to_pickle(credentials, email):
         pickle.dump(credentials, token_file)
 
 # Fungsi untuk mendapatkan kredensial yang terautentikasi
+# def get_authenticated_service():
+#     credentials = None
+#     token_dir = "tokens"
+#     os.makedirs(token_dir, exist_ok=True)
+
+#     # Cek token yang sudah ada
+#     for token_file in os.listdir(token_dir):
+#         with open(os.path.join(token_dir, token_file), 'rb') as token:
+#             temp_credentials = pickle.load(token)
+#             if temp_credentials and temp_credentials.valid:
+#                 return temp_credentials
+#             elif temp_credentials and temp_credentials.expired and temp_credentials.refresh_token:
+#                 temp_credentials.refresh(Request())
+#                 return temp_credentials
+
+#     # Jalankan login console
+#     st.warning("🔐 Salin dan buka link login Google di terminal. Setelah login, tempel kode otentikasi.")
+#     client_config = {
+    # "installed": {
+    #     "client_id": st.secrets["google_oauth"]["client_id"],
+    #     "client_secret": st.secrets["google_oauth"]["client_secret"],
+    #     "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob", "http://localhost"],
+    #     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    #     "token_uri": "https://oauth2.googleapis.com/token"
+    }
+# }
+    
+#     scopes = ["https://www.googleapis.com/auth/blogger"]
+#     # flow = InstalledAppFlow.from_client_config(client_config, scopes=scopes)
+#     # credentials = flow.run_console()
+#     # Autentikasi dari secrets
+#     credentials = service_account.Credentials.from_service_account_info(
+#     st.secrets["gcp_service_account"],
+#     scopes=["https://www.googleapis.com/auth/blogger"]
+# )
+#     auth_url, _ = flow.authorization_url(prompt="consent")
+#     st.markdown(f"[🔗 Klik di sini untuk login Google]({auth_url})")
+
+#     # Buat service Blogger
+#     service = build("blogger", "v3", credentials=credentials)
+
+
+#     return credentials
+
+SCOPES = ["https://www.googleapis.com/auth/blogger"]
+
 def get_authenticated_service():
-    credentials = None
-    token_dir = "tokens"
-    os.makedirs(token_dir, exist_ok=True)
-
-    # Cek token yang sudah ada
-    for token_file in os.listdir(token_dir):
-        with open(os.path.join(token_dir, token_file), 'rb') as token:
-            temp_credentials = pickle.load(token)
-            if temp_credentials and temp_credentials.valid:
-                return temp_credentials
-            elif temp_credentials and temp_credentials.expired and temp_credentials.refresh_token:
-                temp_credentials.refresh(Request())
-                return temp_credentials
-
-    # Jalankan login console
-    st.warning("🔐 Salin dan buka link login Google di terminal. Setelah login, tempel kode otentikasi.")
-    client_config = {
-    "installed": {
+    flow = Flow.from_client_config(
+        {
+            "installed": {
         "client_id": st.secrets["google_oauth"]["client_id"],
         "client_secret": st.secrets["google_oauth"]["client_secret"],
         "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob", "http://localhost"],
         "auth_uri": "https://accounts.google.com/o/oauth2/auth",
         "token_uri": "https://oauth2.googleapis.com/token"
     }
-}
-    
-    scopes = ["https://www.googleapis.com/auth/blogger"]
-    # flow = InstalledAppFlow.from_client_config(client_config, scopes=scopes)
-    # credentials = flow.run_console()
-    # Autentikasi dari secrets
-    credentials = service_account.Credentials.from_service_account_info(
-    st.secrets["gcp_service_account"],
-    scopes=["https://www.googleapis.com/auth/blogger"]
-)
+        },
+        scopes=SCOPES,
+        redirect_uri="http://localhost:8501"
+    )
 
-    # Buat service Blogger
-    service = build("blogger", "v3", credentials=credentials)
+    auth_url, _ = flow.authorization_url(prompt="consent")
+    st.markdown(f"[🔗 Klik di sini untuk login Google]({auth_url})")
 
+    code = st.text_input("📋 Tempel kode dari Google di sini:")
+    if code:
+        flow.fetch_token(code=code)
+        return flow.credentials
 
-    return credentials
-
+    return None
 
 # Streamlit bagian login
 if "credentials" not in st.session_state:
