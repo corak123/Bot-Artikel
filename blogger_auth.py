@@ -10,14 +10,14 @@ import streamlit as st
 #CREDENTIALS_FILE = 'client_secret.json'  # Ganti sesuai file kamu
 
 # Fungsi untuk mendapatkan email user
-def get_user_email(creds):
+def get_user_email(credentials):
     response = requests.get(
         'https://www.googleapis.com/oauth2/v1/userinfo',
         params={'access_token': creds.token}
     ).json()
     return response.get("email", "unknown_user")
 
-def get_user_info(creds):
+def get_user_info(credentials):
     response = requests.get(
         'https://www.googleapis.com/oauth2/v1/userinfo',
         params={'access_token': creds.token}
@@ -31,7 +31,7 @@ def get_user_info(creds):
 
 
 # Fungsi untuk menyimpan kredensial
-def save_credentials_to_pickle(creds, email):
+def save_credentials_to_pickle(credentials, email):
     token_dir = "tokens"
     os.makedirs(token_dir, exist_ok=True)
 
@@ -73,7 +73,7 @@ def get_authenticated_service():
     flow = InstalledAppFlow.from_client_config(client_config, scopes=scopes)
     credentials = flow.run_console()
 
-    return creds
+    return credentials
 
 
 # Streamlit bagian login
