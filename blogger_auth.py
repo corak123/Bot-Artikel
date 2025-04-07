@@ -95,10 +95,10 @@ if "credentials" not in st.session_state:
     st.info("🔐 Silakan login dulu untuk mulai menggunakan bot ini.")
     if st.button("Login dengan Google"):
         try:
-            creds = get_authenticated_service()  # Mendapatkan kredensial dari fungsi
+            credentials = get_authenticated_service()  # Mendapatkan kredensial dari fungsi
             st.session_state.credentials = credentials
             # Mendapatkan email dari kredensial
-            user_info = get_user_info(creds)
+            user_info = get_user_info(credentials )
             st.session_state.user_email = user_info["email"]
             st.session_state.user_name = user_info["name"]
             st.session_state.user_picture = user_info["picture"]
