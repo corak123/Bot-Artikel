@@ -47,7 +47,7 @@ def save_credentials_to_pickle(credentials, email):
 
 # Fungsi untuk mendapatkan kredensial yang terautentikasi
 def get_authenticated_service():
-    creds = None
+    credentials = None
     token_dir = "tokens"
     os.makedirs(token_dir, exist_ok=True)
 
@@ -96,7 +96,7 @@ if "credentials" not in st.session_state:
     if st.button("Login dengan Google"):
         try:
             creds = get_authenticated_service()  # Mendapatkan kredensial dari fungsi
-            st.session_state.credentials = creds
+            st.session_state.credentials = credentials
             # Mendapatkan email dari kredensial
             user_info = get_user_info(creds)
             st.session_state.user_email = user_info["email"]
