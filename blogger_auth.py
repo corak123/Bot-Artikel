@@ -17,14 +17,14 @@ from googleapiclient.discovery import build
 def get_user_email(credentials):
     response = requests.get(
         'https://www.googleapis.com/oauth2/v1/userinfo',
-        params={'access_token': creds.token}
+        params={'access_token': credentials.token}
     ).json()
     return response.get("email", "unknown_user")
 
 def get_user_info(credentials):
     response = requests.get(
         'https://www.googleapis.com/oauth2/v1/userinfo',
-        params={'access_token': creds.token}
+        params={'access_token': credentials.token}
     ).json()
 
     return {
@@ -43,7 +43,7 @@ def save_credentials_to_pickle(credentials, email):
     token_path = os.path.join(token_dir, f"token_{safe_email}.pkl")
     
     with open(token_path, 'wb') as token_file:
-        pickle.dump(creds, token_file)
+        pickle.dump(credentials, token_file)
 
 # Fungsi untuk mendapatkan kredensial yang terautentikasi
 def get_authenticated_service():
