@@ -6,14 +6,13 @@ import base64
 import os
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-from google.oauth2 import service_account
+#from google.oauth2 import service_account
 import requests
 import re
 import json
 import google.auth
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
-from googleapiclient.discovery import build
 import requests
 import streamlit as st
 
@@ -57,7 +56,6 @@ def get_access_token():
 
 
 # Autentikasi dengan service account
-#creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 # Bangun service API
 service = build("blogger", "v3", credentials=credentials)
 
