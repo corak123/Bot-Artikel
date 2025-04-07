@@ -1,25 +1,12 @@
 import os
 import pickle
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
 import requests
 import streamlit as st
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import Flow
+from google.auth.transport.requests import Request
 
-
-
-
-
-#CREDENTIALS_FILE = 'client_secret.json'  # Ganti sesuai file kamu
-
-# Fungsi untuk mendapatkan email user
-def get_user_email(credentials):
-    response = requests.get(
-        'https://www.googleapis.com/oauth2/v1/userinfo',
-        params={'access_token': credentials.token}
-    ).json()
-    return response.get("email", "unknown_user")
+# SCOPES untuk Blogger API
+SCOPES = ["https://www.googleapis.com/auth/blogger"]
 
 def get_user_info(credentials):
     response = requests.get(
@@ -33,111 +20,58 @@ def get_user_info(credentials):
         "picture": response.get("picture", None)
     }
 
-
-# Fungsi untuk menyimpan kredensial
 def save_credentials_to_pickle(credentials, email):
     token_dir = "tokens"
     os.makedirs(token_dir, exist_ok=True)
-
     safe_email = email.replace("@", "_").replace(".", "_")
     token_path = os.path.join(token_dir, f"token_{safe_email}.pkl")
     
     with open(token_path, 'wb') as token_file:
         pickle.dump(credentials, token_file)
 
-# Fungsi untuk mendapatkan kredensial yang terautentikasi
-# def get_authenticated_service():
-#     credentials = None
-#     token_dir = "tokens"
-#     os.makedirs(token_dir, exist_ok=True)
-
-#     # Cek token yang sudah ada
-#     for token_file in os.listdir(token_dir):
-#         with open(os.path.join(token_dir, token_file), 'rb') as token:
-#             temp_credentials = pickle.load(token)
-#             if temp_credentials and temp_credentials.valid:
-#                 return temp_credentials
-#             elif temp_credentials and temp_credentials.expired and temp_credentials.refresh_token:
-#                 temp_credentials.refresh(Request())
-#                 return temp_credentials
-
-#     # Jalankan login console
-#     st.warning("🔐 Salin dan buka link login Google di terminal. Setelah login, tempel kode otentikasi.")
-#     client_config = {
-    # "installed": {
-    #     "client_id": st.secrets["google_oauth"]["client_id"],
-    #     "client_secret": st.secrets["google_oauth"]["client_secret"],
-    #     "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob", "http://localhost"],
-    #     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    #     "token_uri": "https://oauth2.googleapis.com/token"
-    }
-# }
-    
-#     scopes = ["https://www.googleapis.com/auth/blogger"]
-#     # flow = InstalledAppFlow.from_client_config(client_config, scopes=scopes)
-#     # credentials = flow.run_console()
-#     # Autentikasi dari secrets
-#     credentials = service_account.Credentials.from_service_account_info(
-#     st.secrets["gcp_service_account"],
-#     scopes=["https://www.googleapis.com/auth/blogger"]
-# )
-#     auth_url, _ = flow.authorization_url(prompt="consent")
-#     st.markdown(f"[🔗 Klik di sini untuk login Google]({auth_url})")
-
-#     # Buat service Blogger
-#     service = build("blogger", "v3", credentials=credentials)
-
-
-#     return credentials
-
-SCOPES = ["https://www.googleapis.com/auth/blogger"]
-
 def get_authenticated_service():
     flow = Flow.from_client_config(
         {
             "installed": {
-        "client_id": st.secrets["google_oauth"]["client_id"],
-        "client_secret": st.secrets["google_oauth"]["client_secret"],
-        "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob", "http://localhost"],
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "token_uri": "https://oauth2.googleapis.com/token"
-    }
+                "client_id": st.secrets["google_oauth"]["client_id"],
+                "client_secret": st.secrets["google_oauth"]["client_secret"],
+                "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob", "http://localhost"],
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token"
+            }
         },
         scopes=SCOPES,
-        redirect_uri="http://localhost:8501"
+        redirect_uri="urn:ietf:wg:oauth:2.0:oob"
     )
 
     auth_url, _ = flow.authorization_url(prompt="consent")
-    st.markdown(f"[🔗 Klik di sini untuk login Google]({auth_url})")
+    st.markdown(f"### 🔗 [Klik di sini untuk login dengan Google]({auth_url})")
 
-    code = st.text_input("📋 Tempel kode dari Google di sini:")
+    code = st.text_input("📋 Setelah login, tempelkan kode otentikasi di sini:")
     if code:
-        flow.fetch_token(code=code)
-        return flow.credentials
-
+        try:
+            flow.fetch_token(code=code)
+            return flow.credentials
+        except Exception as e:
+            st.error(f"Gagal mengambil token: {e}")
+            return None
     return None
 
-# Streamlit bagian login
-if "credentials" not in st.session_state:
-    st.title("🤖 Bot Artikel dan Posting Blogger Otomatis")
-    st.info("🔐 Silakan login dulu untuk mulai menggunakan bot ini.")
-    if st.button("Login dengan Google"):
-        try:
-            credentials = get_authenticated_service()  # Mendapatkan kredensial dari fungsi
+# Bagian login Streamlit
+def login_with_google():
+    if "credentials" not in st.session_state:
+        st.title("🤖 Bot Artikel Blogger")
+        st.info("🔐 Silakan login untuk mulai menggunakan bot ini.")
+        credentials = get_authenticated_service()
+        if credentials:
+            user_info = get_user_info(credentials)
             st.session_state.credentials = credentials
-            # Mendapatkan email dari kredensial
-            user_info = get_user_info(credentials )
             st.session_state.user_email = user_info["email"]
             st.session_state.user_name = user_info["name"]
             st.session_state.user_picture = user_info["picture"]
             save_credentials_to_pickle(credentials, user_info["email"])
-
-            st.success("✅ Berhasil login!")
+            st.success(f"✅ Berhasil login sebagai {user_info['email']}")
             st.rerun()
-        except Exception as e:
-            st.error(f"Gagal login: {e}")
-    st.stop()
-else:
-    # Jika sudah login, tampilkan tombol logout
-    st.write("✅ Anda sudah login!")
-    
+        st.stop()
+    else:
+        st.write(f"✅ Anda sudah login sebagai {st.session_state.user_email}")
