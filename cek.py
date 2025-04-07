@@ -28,7 +28,10 @@ genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 #SERVICE_ACCOUNT_FILE = "credentials.json"
 
 credentials_info = st.secrets["gcp_service_account"]
-credentials = service_account.Credentials.from_service_account_info(credentials_info)
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"],
+    scopes=["https://www.googleapis.com/auth/blogger"]
+)
 
 # Scope akses ke Google Drive
 scopes=[
