@@ -70,9 +70,16 @@ def get_authenticated_service():
 }
     
     scopes = ["https://www.googleapis.com/auth/blogger"]
-    flow = InstalledAppFlow.from_client_config(client_config, scopes=scopes)
-    credentials = flow.run_console()
+    # flow = InstalledAppFlow.from_client_config(client_config, scopes=scopes)
+    # credentials = flow.run_console()
+    # Autentikasi dari secrets
+    credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"],
+    scopes=["https://www.googleapis.com/auth/blogger"]
+)
 
+    # Buat service Blogger
+    service = build("blogger", "v3", credentials=credentials)
 
 
     return credentials
