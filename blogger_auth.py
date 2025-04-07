@@ -5,12 +5,9 @@ from google.auth.transport.requests import Request
 import requests
 import streamlit as st
 
-SCOPES = ['https://www.googleapis.com/auth/blogger']
 
-# CLIENT_ID = st.secrets["google_oauth"]["client_id"]
-# CLIENT_SECRET = st.secrets["google_oauth"]["client_secret"]
 
-CREDENTIALS_FILE = 'client_secret.json'  # Ganti sesuai file kamu
+#CREDENTIALS_FILE = 'client_secret.json'  # Ganti sesuai file kamu
 
 # Fungsi untuk mendapatkan email user
 def get_user_email(creds):
@@ -62,19 +59,19 @@ def get_authenticated_service():
 
     # Jalankan login console
     st.warning("🔐 Salin dan buka link login Google di terminal. Setelah login, tempel kode otentikasi.")
-    flow = InstalledAppFlow.from_client_config({
-        "installed": {
-            "client_id": CLIENT_ID,
-            "client_secret": CLIENT_SECRET,
-            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-            "token_uri": "https://oauth2.googleapis.com/token"
-        }
-    }, SCOPES)
+    client_config = {
+    "installed": {
+        "client_id": st.secrets["google_oauth"]["client_id"],
+        "client_secret": st.secrets["google_oauth"]["client_secret"],
+        "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob", "http://localhost"],
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token"
+    }
+}
     
-    creds = flow.run_console()
-    return creds
-
-
+    scopes = ["https://www.googleapis.com/auth/blogger"]
+    flow = InstalledAppFlow.from_client_config(client_config, scopes=scopes)
+    credentials = flow.run_console()
 
     return creds
 
