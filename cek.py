@@ -31,7 +31,11 @@ credentials_info = st.secrets["gcp_service_account"]
 credentials = service_account.Credentials.from_service_account_info(credentials_info)
 
 # Scope akses ke Google Drive
-SCOPES = ["https://www.googleapis.com/auth/drive.file"]
+scopes=[
+    "https://www.googleapis.com/auth/blogger",
+    "https://www.googleapis.com/auth/drive"
+]
+
 
 
 # Endpoint untuk mendapatkan access token baru
@@ -56,7 +60,9 @@ def get_access_token():
 
 # Autentikasi dengan service account
 #creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-service = build("drive", "v3", credentials=creds)
+# Bangun service API
+service = build("blogger", "v3", credentials=credentials)
+
 print("Autentikasi berhasil!")
 
 # ID folder tujuan di Google Drive
