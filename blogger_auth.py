@@ -35,27 +35,31 @@ def get_authenticated_service():
             "installed": {
                 "client_id": st.secrets["google_oauth"]["client_id"],
                 "client_secret": st.secrets["google_oauth"]["client_secret"],
-                "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob", "http://localhost"],
+                "redirect_uris": [redirect_uri],
                 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token"
             }
         },
         scopes=SCOPES,
-        redirect_uri="urn:ietf:wg:oauth:2.0:oob"
+        redirect_uri=redirect_uri
     )
 
-    auth_url, _ = flow.authorization_url(prompt="consent")
-    st.markdown(f"### 🔗 [Klik di sini untuk login dengan Google]({auth_url})")
-
-    code = st.text_input("📋 Setelah login, tempelkan kode otentikasi di sini:")
-    if code:
-        try:
-            flow.fetch_token(code=code)
-            return flow.credentials
-        except Exception as e:
-            st.error(f"Gagal mengambil token: {e}")
+    if "auth_code_received" not in st.session_state:
+            auth_url, _ = flow.authorization_url(prompt="consent", access_type="offline", include_granted_scopes="true")
+            st.markdown(f"### 🔗 [Klik di sini untuk login dengan Google]({auth_url})")
+            code = st.text_input("📋 Setelah login, tempelkan kode otentikasi di sini:")
+            if code:
+                try:
+                    flow.fetch_token(code=code)
+                    st.session_state.auth_code_received = True
+                    return flow.credentials
+                except Exception as e:
+                    st.error(f"Gagal mengambil token: {e}")
+                    return None
+            st.stop()
+        else:
             return None
-    return None
+   
 
 # Bagian login Streamlit
 def login_with_google():
