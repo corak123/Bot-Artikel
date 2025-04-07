@@ -22,7 +22,7 @@ import streamlit as st
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
 # Inisialisasi client
-client = genai.Client(api_key=GEMINI_API_KEY)
+#client = genai.Client(api_key=GEMINI_API_KEY)
 
 # Path ke file service account JSON
 SERVICE_ACCOUNT_FILE = "credentials.json"
