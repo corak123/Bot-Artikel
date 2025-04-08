@@ -45,20 +45,29 @@ def get_authenticated_service():
         redirect_uri=redirect_uri
     )
 
-    if "auth_code_received" not in st.session_state:
-            auth_url, _ = flow.authorization_url(prompt="consent", access_type="offline", include_granted_scopes="true")
-            st.markdown(f"### 🔗 [Klik di sini untuk login dengan Google]({auth_url})")
-            code = st.text_input("📋 Setelah login, tempelkan kode otentikasi di sini:")
-            if code:
-                try:
-                    flow.fetch_token(code=code)
+    if "auth_code_received" not in st.session_state or "credentials" not in st.session_state:
+        auth_url, _ = flow.authorization_url(prompt="consent", access_type="offline", include_granted_scopes="true")
+        st.markdown(f"### 🔗 [Klik di sini untuk login dengan Google]({auth_url})")
+        code = st.text_input("📋 Setelah login, tempelkan kode otentikasi di sini:")
+        
+        if code:
+            try:
+                flow.fetch_token(code=code)
+                creds = flow.credentials
+
+                if creds and creds.token:
                     st.session_state.auth_code_received = True
-                    return flow.credentials
-                except Exception as e:
-                    st.error(f"Gagal mengambil token: {e}")
+                    st.session_state.credentials = creds
+                    return creds
+                else:
+                    st.error("Gagal mendapatkan credentials. Mungkin kode tidak valid.")
                     return None
+            except Exception as e:
+                st.error(f"Gagal mengambil token: {e}")
+                return None
     else:
-        return None
+        return st.session_state.get("credentials", None)
+
    
 
 # Bagian login Streamlit
