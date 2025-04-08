@@ -36,6 +36,16 @@ def get_user_info(creds):
         "picture": response.get("picture", None)
     }
 
+def create_auth_flow():
+    flow = Flow.from_client_secrets_file(
+        CLIENT_SECRET_FILE,
+        scopes=SCOPES,
+        redirect_uri=REDIRECT_URI
+    )
+    auth_url, _ = flow.authorization_url(prompt='consent', include_granted_scopes='true')
+    return auth_url, flow
+
+
 def get_auth_url():
     flow = Flow.from_client_secrets_file(
         CLIENT_SECRET_FILE,
