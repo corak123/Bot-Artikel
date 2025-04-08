@@ -14,7 +14,7 @@ CLIENT_ID = st.secrets["google_oauth"]["client_id"]
 CLIENT_SECRET = st.secrets["google_oauth"]["client_secret"]
 
 client_config = {
-    "installed": {
+    "web": {
         "client_id": CLIENT_ID,
         "client_secret": CLIENT_SECRET,
         "auth_uri": "https://accounts.google.com/o/oauth2/auth",
