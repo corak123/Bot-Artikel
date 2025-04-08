@@ -15,6 +15,8 @@ from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 import requests
 import streamlit as st
+from google.oauth2.service_account import Credentials
+
 
 # Ganti dengan API Key kamu
 # Pakai API key dari secrets
