@@ -156,7 +156,7 @@ if "credentials" not in st.session_state:
             st.success("✅ Login berhasil!")
             st.rerun()
         except Exception as e:
-            st.error(f"Gagal login: {e}")
+            st.error(f"Gagal sihh login: {e}")
     st.stop()
 
 # ✅ Jika sudah login, tampilkan konten dan tombol logout
