@@ -50,26 +50,27 @@ def get_authenticated_service():
     code = st.query_params.get("code", [None])[0]
 
     if code and "auth_code_received" not in st.session_state:
-        try:
-            flow.fetch_token(code=code)
-            creds = flow.credentials
-            if not creds or not creds.token:
-                st.error("Gagal mendapatkan credentials. Token kosong.")
-                return None
-            st.session_state.auth_code_received = True
-            st.session_state.credentials = creds
-            return creds
-        except Exception as e:
-            st.error(f"Gagal mengambil token: {e}")
+    st.write("Kode dari URL:", code)  # Debugging
+    try:
+        flow.fetch_token(code=code)
+        creds = flow.credentials
+        st.write("Hasil credentials:", creds)  # Debug
+        if not creds or not creds.token:
+            st.error("Gagal mendapatkan credentials. Token kosong.")
             return None
-
-    elif "auth_code_received" not in st.session_state:
-        auth_url, _ = flow.authorization_url(prompt="consent", access_type="offline", include_granted_scopes="true")
-        st.markdown(f"### 🔗 [Klik di sini untuk login dengan Google]({auth_url})")
+        st.session_state.auth_code_received = True
+        st.session_state.credentials = creds
+        return creds
+    except Exception as e:
+        st.error(f"Gagal mengambil token: {e}")
         return None
 
-    else:
-        return st.session_state.get("credentials", None)
+    flow.fetch_token(code=code)
+
+    if not flow.credentials or not flow.credentials.token:
+        st.error("Token tidak berhasil diambil. Mungkin kodenya expired.")
+        return None
+
 
 
 
