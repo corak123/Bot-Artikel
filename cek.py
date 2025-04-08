@@ -20,7 +20,7 @@ SCOPES = [
 ]
 
 # Folder Drive untuk menyimpan token
-drive_folder_id = "1d3NFHLCxqVWJpGGO4dwbPmDok4vrkIX2"
+folder_id = "1d3NFHLCxqVWJpGGO4dwbPmDok4vrkIX2"
 # Folder Drive untuk upload gambar
 GDRIVE_IMAGE_FOLDER_ID = "1mn0Xd2zsU7DUsSaJp-D8-FbxhsTN78fk"
 # Blog ID tujuan posting
