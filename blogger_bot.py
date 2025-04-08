@@ -3,7 +3,7 @@ from cek import generate_article_and_image, get_blog_categories, post_to_blogger
 from blogger_auth import get_authenticated_service, save_credentials_to_pickle, get_user_email, get_user_info
 
 #st.set_page_config(page_title="Auto Posting Blogger Bot", layout="centered")
-st.title("🤖 Auto Posting ke Blogger dengan Gemini AI")
+#st.title("🤖 Auto Posting ke Blogger dengan Gemini AI")
 
 # 2. Setelah login, tampilkan interface utama
 st.markdown("""
