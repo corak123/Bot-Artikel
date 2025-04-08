@@ -141,7 +141,7 @@ if st.session_state.get("just_logged_out"):
     #show_login_prompt()
     st.stop()
 
-✅ Jika belum login
+#✅ Jika belum login
 if "credentials" not in st.session_state:
     st.info("🔐 Silakan login terlebih dahulu.")
     if st.button("🔐 Login dengan Google"):
