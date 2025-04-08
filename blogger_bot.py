@@ -97,7 +97,9 @@ st.markdown("""
 
 
 
-drive_service = create_drive_service_from_secrets()
+creds, drive_service = create_drive_service_from_secrets()
+save_credentials_to_drive(creds, drive_service, drive_folder_id)
+
 
 
 # 🖼️ Sidebar Profil
