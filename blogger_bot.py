@@ -10,7 +10,7 @@ if "credentials" not in st.session_state:
     st.info("🔐 Silakan login dengan Google terlebih dahulu.")
 
     # Tangani redirect URL
-    query_params = st.query_params()
+    query_params = st.query_params
     if "code" in query_params:
         with st.spinner("Sedang menyelesaikan proses login..."):
             try:
