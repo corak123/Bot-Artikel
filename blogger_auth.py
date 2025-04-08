@@ -77,20 +77,30 @@ def get_authenticated_service():
         )
 
         st.markdown(f"🔐 [Klik untuk login dengan Google]({auth_url})")
-        code = st.text_input("Masukkan kode autentikasi Google di sini:")
-
-        if code:
-            flow.fetch_token(code=code)
-            creds = flow.credentials
-            print(creds.valid)  # True kalau masih aktif
-            user_info = get_user_info(creds)
-            st.session_state["user_email"] = user_info["email"]
-            st.session_state["user_name"] = user_info["name"]
-            st.session_state["user_picture"] = user_info["picture"]
-
-            # Simpan token ke Google Drive
-            upload_token_to_drive(user_info["email"], creds)
-            st.success("✅ Login berhasil!")
+        #code = st.text_input("Masukkan kode autentikasi Google di sini:")
+        query_params = st.experimental_get_query_params()
+        if "code" in query_params:
+            code = query_params["code"][0]
+            try:
+                flow.fetch_token(code=code)
+                creds = flow.credentials
+        
+                if creds and creds.valid:
+                    user_info = get_user_info(creds)
+                    st.session_state["credentials"] = creds
+                    st.session_state["user_email"] = user_info["email"]
+                    st.session_state["user_name"] = user_info["name"]
+                    st.session_state["user_picture"] = user_info["picture"]
+        
+                    upload_token_to_drive(user_info["email"], creds)
+                    save_credentials_to_local(creds, user_info["email"])
+        
+                    st.success("✅ Login berhasil!")
+                    st.experimental_rerun()
+                else:
+                    st.error("❌ Token tidak valid.")
+            except Exception as e:
+                st.error(f"❌ Gagal ambil token: {e}")
 
     return creds
 
