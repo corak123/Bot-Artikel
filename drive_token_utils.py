@@ -14,6 +14,28 @@ def get_drive_service():
     service = build("drive", "v3", credentials=drive_creds)
     return service
 
+def save_credentials_to_drive(credentials, user_email, drive_service):
+    """
+    Simpan credentials Google OAuth ke Google Drive user
+    """
+    creds_json = credentials.to_json()
+
+    file_metadata = {
+        'name': f'token_{user_email}.json',
+        'parents': [TOKEN_FOLDER_ID],  # folder ID kamu
+        'mimeType': 'application/json'
+    }
+
+    media = MediaInMemoryUpload(creds_json.encode('utf-8'), mimetype='application/json')
+
+    drive_service.files().create(
+        body=file_metadata,
+        media_body=media,
+        fields='id'
+    ).execute()
+
+    print(f"✅ Token berhasil disimpan untuk {user_email}")
+
 def find_or_create_folder(service):
     # Cek apakah folder sudah ada
     query = f"name='{DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed = false"
