@@ -142,22 +142,22 @@ if st.session_state.get("just_logged_out"):
     st.stop()
 
 # ✅ Jika belum login
-if "credentials" not in st.session_state:
-    st.info("🔐 Silakan login terlebih dahulu.")
-    if st.button("🔐 Login dengan Google"):
-        try:
-            credentials  = get_authenticated_service()
-            user_info = get_user_info(credentials )
-            st.session_state.credentials = credentials 
-            st.session_state.user_email = user_info["email"]
-            st.session_state.user_name = user_info["name"]
-            st.session_state.user_picture = user_info["picture"]
-            save_credentials_to_pickle(credentials , user_info["email"])
-            st.success("✅ Login berhasil!")
-            st.rerun()
-        except Exception as e:
-            st.error(f"Gagal sihh login: {e}")
-    st.stop()
+# if "credentials" not in st.session_state:
+#     st.info("🔐 Silakan login terlebih dahulu.")
+#     if st.button("🔐 Login dengan Google"):
+#         try:
+#             credentials  = get_authenticated_service()
+#             user_info = get_user_info(credentials )
+#             st.session_state.credentials = credentials 
+#             st.session_state.user_email = user_info["email"]
+#             st.session_state.user_name = user_info["name"]
+#             st.session_state.user_picture = user_info["picture"]
+#             save_credentials_to_pickle(credentials , user_info["email"])
+#             st.success("✅ Login berhasil!")
+#             st.rerun()
+#         except Exception as e:
+#             st.error(f"Gagal sihh login: {e}")
+#     st.stop()
 
 # ✅ Jika sudah login, tampilkan konten dan tombol logout
 # st.success("✅ Selamat datang! Anda sudah login.")
