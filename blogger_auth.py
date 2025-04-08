@@ -46,6 +46,11 @@ def get_auth_url():
     auth_url, _ = flow.authorization_url(prompt='consent')
     return auth_url
 
+def handle_auth_callback(auth_code, flow):
+    flow.fetch_token(code=auth_code)
+    credentials = flow.credentials
+    return credentials
+
 
 # Fungsi login dan ambil credentials
 def get_authenticated_service():
