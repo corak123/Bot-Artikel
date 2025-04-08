@@ -26,6 +26,7 @@ genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 # Path ke file service account JSON
 #SERVICE_ACCOUNT_FILE = "credentials.json"
 
+GDRIVE_SCOPES = ["https://www.googleapis.com/auth/drive"]
 
 # Scope akses ke Google Drive
 scopes=[
@@ -47,6 +48,19 @@ def load_credentials_from_drive(drive_service, drive_folder_id, filename="user_t
         return creds
     return None
 
+
+def create_drive_service_from_secrets():
+    creds = Credentials.from_authorized_user_info(
+        info=st.secrets["google_drive_oauth"], scopes=GDRIVE_SCOPES
+    )
+    return build("drive", "v3", credentials=creds)
+
+
+drive_service = create_drive_service_from_secrets()
+drive_folder_id = "1d3NFHLCxqVWJpGGO4dwbPmDok4vrkIX2"
+
+# Simpan token user ke drive
+save_credentials_to_drive(creds, drive_service, drive_folder_id)
 
 # Endpoint untuk mendapatkan access token baru
 TOKEN_URL = "https://oauth2.googleapis.com/token"
