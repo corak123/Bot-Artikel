@@ -1,3 +1,5 @@
+st.session_state.clear()
+
 # import streamlit as st
 # from cek import generate_article_and_image, get_blog_categories, post_to_blogger_with_creds
 # from blogger_auth import get_authenticated_service, save_credentials_to_pickle, get_user_email, get_user_info
