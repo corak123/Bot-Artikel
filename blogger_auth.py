@@ -30,7 +30,7 @@ def save_credentials_to_pickle(credentials, email):
         pickle.dump(credentials, token_file)
 
 def get_authenticated_service():
-    redirect_uri = "urn:ietf:wg:oauth:2.0:oob"  # Gunakan redirect manual
+    redirect_uri = "https://bot-artikel-auto.streamlit.app/"  # Gunakan redirect manual
 
     flow = Flow.from_client_config(
         {
