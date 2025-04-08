@@ -53,6 +53,8 @@ def get_authenticated_service():
     if code and "credentials" not in st.session_state:
         try:
             flow.fetch_token(code=code)
+            # Setelah flow.fetch_token(code=code)
+            save_credentials_to_drive(creds, drive_service, drive_folder_id)
             creds = flow.credentials
             if not creds or not creds.token:
                 st.error("Gagal mendapatkan credentials. Token kosong.")
@@ -66,16 +68,13 @@ def get_authenticated_service():
             return None
 
     # Kalau belum login
+    # Coba load credentials dari Drive dulu
     if "credentials" not in st.session_state:
-        auth_url, _ = flow.authorization_url(
-            prompt="consent",
-            access_type="offline",
-            include_granted_scopes="true"
-        )
-        st.markdown(f"### 🔗 [Klik di sini untuk login dengan Google]({auth_url})")
-        st.stop()
+        creds = load_credentials_from_drive(drive_service, drive_folder_id)
+        if creds and creds.valid:
+            st.session_state.credentials = creds
+            return creds
 
-    return st.session_state.credentials
 
 
    
