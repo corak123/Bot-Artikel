@@ -4,75 +4,82 @@ import json
 import requests
 import streamlit as st
 from google_auth_oauthlib.flow import Flow
-from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
-from drive_token_utils import upload_token_to_drive, get_user_folder_id
+from drive_token_utils import upload_token_to_drive, load_token_from_drive
 
-SCOPES = ['https://www.googleapis.com/auth/blogger', 'https://www.googleapis.com/auth/drive.file']
+SCOPES = ['https://www.googleapis.com/auth/blogger']
 
+# Ambil client_id dan client_secret dari st.secrets
 CLIENT_ID = st.secrets["google_oauth"]["client_id"]
 CLIENT_SECRET = st.secrets["google_oauth"]["client_secret"]
-REDIRECT_URI = st.secrets["google_oauth"]["redirect_uri"]  # misalnya: "https://your-streamlit-app-url/"
 
-# Fungsi untuk membuat authorization URL
-def get_auth_url():
-    flow = Flow.from_client_config(
-        {
-            "web": {
-                "client_id": CLIENT_ID,
-                "client_secret": CLIENT_SECRET,
-                "redirect_uris": [REDIRECT_URI],
-                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                "token_uri": "https://oauth2.googleapis.com/token"
-            }
-        },
-        scopes=SCOPES,
-        redirect_uri=REDIRECT_URI
-    )
-    auth_url, _ = flow.authorization_url(prompt='consent', access_type='offline', include_granted_scopes='true')
-    st.session_state.flow = flow  # simpan flow sementara
-    return auth_url
-
-# Fungsi untuk menyimpan kredensial user ke Google Drive
-def save_credentials_to_drive(creds, email):
-    token_data = {
-        "token": creds.token,
-        "refresh_token": creds.refresh_token,
-        "token_uri": creds.token_uri,
-        "client_id": creds.client_id,
-        "client_secret": creds.client_secret,
-        "scopes": creds.scopes
+client_config = {
+    "installed": {
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET,
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "redirect_uris": ["http://localhost"]
     }
+}
 
-    safe_email = email.replace("@", "_").replace(".", "_")
-    filename = f"token_{safe_email}.json"
-    json_str = json.dumps(token_data)
-    user_folder_id = get_user_folder_id(email)
-    upload_token_to_drive(json_str.encode(), filename, user_folder_id)
-
-# Fungsi untuk ambil email user dari akses token
+# Fungsi untuk ambil info user dari token
 def get_user_info(creds):
     response = requests.get(
         'https://www.googleapis.com/oauth2/v1/userinfo',
         params={'access_token': creds.token}
     ).json()
+
     return {
         "email": response.get("email", "unknown_user"),
         "name": response.get("name", "Unknown Name"),
         "picture": response.get("picture", None)
     }
 
-# Fungsi untuk menyelesaikan proses login dari URL callback
-def handle_auth_callback(code):
-    flow = st.session_state.flow
-    flow.fetch_token(code=code)
-    creds = flow.credentials
-    user_info = get_user_info(creds)
+# Fungsi login dan ambil credentials
+def get_authenticated_service():
+    creds = None
 
-    # Simpan ke session dan Google Drive
-    st.session_state.credentials = creds
-    st.session_state.user_email = user_info["email"]
-    st.session_state.user_name = user_info["name"]
-    st.session_state.user_picture = user_info["picture"]
-    save_credentials_to_drive(creds, user_info["email"])
-    return True
+    if "user_email" in st.session_state:
+        creds = load_token_from_drive(st.session_state["user_email"])
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+
+    if not creds or not creds.valid:
+        # Login OAuth
+        flow = Flow.from_client_config(
+            client_config,
+            scopes=SCOPES,
+            redirect_uri='http://localhost'
+        )
+        auth_url, _ = flow.authorization_url(
+            access_type='offline',
+            prompt='consent'
+        )
+
+        st.markdown(f"🔐 [Klik untuk login dengan Google]({auth_url})")
+        code = st.text_input("Masukkan kode autentikasi Google di sini:")
+
+        if code:
+            flow.fetch_token(code=code)
+            creds = flow.credentials
+            user_info = get_user_info(creds)
+            st.session_state["user_email"] = user_info["email"]
+            st.session_state["user_name"] = user_info["name"]
+            st.session_state["user_picture"] = user_info["picture"]
+
+            # Simpan token ke Google Drive
+            upload_token_to_drive(user_info["email"], creds)
+            st.success("✅ Login berhasil!")
+
+    return creds
+
+# UI Login
+if "credentials" not in st.session_state:
+    st.title("🤖 Bot Artikel Blogger Otomatis")
+    st.info("🔐 Silakan login untuk menggunakan aplikasi.")
+    creds = get_authenticated_service()
+    if creds:
+        st.session_state["credentials"] = creds
+        st.rerun()
+    st.stop()
