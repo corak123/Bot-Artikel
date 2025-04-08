@@ -50,7 +50,7 @@ def get_authenticated_service():
     code = st.query_params.get("code", [None])[0]
 
     if code and "auth_code_received" not in st.session_state:
-    st.write("Kode dari URL:", code)  # Debugging
+        st.write("Kode dari URL:", code)  # Debugging
     try:
         flow.fetch_token(code=code)
         creds = flow.credentials
