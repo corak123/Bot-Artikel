@@ -36,6 +36,16 @@ def get_user_info(creds):
         "picture": response.get("picture", None)
     }
 
+def get_auth_url():
+    flow = Flow.from_client_secrets_file(
+        CLIENT_SECRET_FILE,
+        scopes=SCOPES,
+        redirect_uri=REDIRECT_URI
+    )
+    auth_url, _ = flow.authorization_url(prompt='consent')
+    return auth_url
+
+
 # Fungsi login dan ambil credentials
 def get_authenticated_service():
     creds = None
