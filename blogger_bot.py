@@ -93,6 +93,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Ganti ini dengan ID folder Google Drive kamu
+folder_id = "1d3NFHLCxqVWJpGGO4dwbPmDok4vrkIX2"
 
 creds, drive_service = create_drive_service_from_secrets()
 save_credentials_to_drive(creds, drive_service, folder_id)
