@@ -49,6 +49,7 @@ def get_auth_url():
 def handle_auth_callback(auth_code, flow):
     flow.fetch_token(code=auth_code)
     credentials = flow.credentials
+    print(credentials.valid)  # True kalau masih aktif
     return credentials
 
 def get_drive_service():
