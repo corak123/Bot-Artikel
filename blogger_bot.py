@@ -115,7 +115,7 @@ def show_login_prompt():
     st.write("🔐 Klik tombol di bawah untuk login dengan Google")
 
     if st.button("Login dengan Google"):
-        credentials = get_authenticated_service()
+        #credentials = get_authenticated_service()
 
         if credentials:
             st.write("🔐 berhasil kredensial")
