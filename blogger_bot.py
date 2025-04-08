@@ -130,7 +130,7 @@ def show_login_prompt():
                 st.success("✅ Login berhasil!")
                 st.rerun()
             except Exception as e:
-                st.error(f"Gagal login: {e}")
+                st.error(f"Gagal ini login: {e}")
         else:
             st.warning("🕒 Menunggu kode otentikasi dari Google...")
 
