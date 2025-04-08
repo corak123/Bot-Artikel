@@ -51,6 +51,8 @@ def handle_auth_callback(auth_code, flow):
     credentials = flow.credentials
     return credentials
 
+def get_drive_service():
+    return build("drive", "v3", credentials=st.session_state.credentials)
 
 # Fungsi login dan ambil credentials
 def get_authenticated_service():
