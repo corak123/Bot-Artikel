@@ -10,7 +10,7 @@ import streamlit as st
 DRIVE_FOLDER_NAME = "blogger_tokens"
 
 def get_drive_service():
-    drive_creds = Credentials.from_authorized_user_info(st.secrets["drive_oauth"])
+    drive_creds = Credentials.from_authorized_user_info(st.secrets["gcp_service_account"])
     service = build("drive", "v3", credentials=drive_creds)
     return service
 
