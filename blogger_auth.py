@@ -31,6 +31,7 @@ def save_credentials_to_pickle(credentials, email):
 
 def get_authenticated_service():
     redirect_uri = "https://bot-artikel-auto.streamlit.app/"
+
     flow = Flow.from_client_config(
         {
             "installed": {
@@ -45,28 +46,38 @@ def get_authenticated_service():
         redirect_uri=redirect_uri
     )
 
-    if "auth_code_received" not in st.session_state or "credentials" not in st.session_state:
+    # Ambil kode dari URL setelah login
+    query_params = st.experimental_get_query_params()
+    code = query_params.get("code", [None])[0]
+
+    if code and "auth_code_received" not in st.session_state:
+        try:
+            flow.fetch_token(code=code)
+            creds = flow.credentials
+            user_info = get_user_info(creds)
+
+            st.session_state.auth_code_received = True
+            st.session_state.credentials = creds
+            st.session_state.user_email = user_info["email"]
+            st.session_state.user_name = user_info["name"]
+            st.session_state.user_picture = user_info["picture"]
+
+            save_credentials_to_pickle(creds, user_info["email"])
+
+            # Bersihkan kode di URL dengan st.experimental_set_query_params
+            st.experimental_set_query_params()
+            st.rerun()
+        except Exception as e:
+            st.error(f"Gagal mengambil token: {e}")
+            return None
+
+    elif "auth_code_received" not in st.session_state:
         auth_url, _ = flow.authorization_url(prompt="consent", access_type="offline", include_granted_scopes="true")
         st.markdown(f"### 🔗 [Klik di sini untuk login dengan Google]({auth_url})")
-        code = st.text_input("📋 Setelah login, tempelkan kode otentikasi di sini:")
-        
-        if code:
-            try:
-                flow.fetch_token(code=code)
-                creds = flow.credentials
-
-                if creds and creds.token:
-                    st.session_state.auth_code_received = True
-                    st.session_state.credentials = creds
-                    return creds
-                else:
-                    st.error("Gagal mendapatkan credentials. Mungkin kode tidak valid.")
-                    return None
-            except Exception as e:
-                st.error(f"Gagal mengambil token: {e}")
-                return None
+        return None
     else:
         return st.session_state.get("credentials", None)
+
 
    
 
