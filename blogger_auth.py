@@ -47,9 +47,9 @@ def get_authenticated_service():
     )
 
     # Ambil kode dari URL setelah login
+    query_params = st.query_params  # Ganti dari deprecated `experimental_get_query_params`
     code = query_params.get("code", [None])[0]
     st.write("Kode yang diterima:", code)  # Debug
-
 
     if code:
         try:
@@ -61,19 +61,18 @@ def get_authenticated_service():
                 return None
             st.session_state.auth_code_received = True
             st.session_state.credentials = creds
-            # Lanjutkan proses login...
             return creds
         except Exception as e:
             st.error(f"Gagal mengambil token: {e}")
             return None
-    
-    
-    elif "auth_code_received" not in st.session_state:
-            auth_url, _ = flow.authorization_url(prompt="consent", access_type="offline", include_granted_scopes="true")
-            st.markdown(f"### 🔗 [Klik di sini untuk login dengan Google]({auth_url})")
-            return None
-        else:
-            return st.session_state.get("credentials", None)
+
+    if "auth_code_received" not in st.session_state:
+        auth_url, _ = flow.authorization_url(prompt="consent", access_type="offline", include_granted_scopes="true")
+        st.markdown(f"### 🔗 [Klik di sini untuk login dengan Google]({auth_url})")
+        return None
+
+    return st.session_state.get("credentials", None)
+
 
 
    
