@@ -52,28 +52,28 @@ def get_authenticated_service():
 
 
     if code:
-    try:
-        flow.fetch_token(code=code)
-        creds = flow.credentials
-        st.write("Hasil credentials:", creds)  # Debug: Periksa apakah creds bukan None
-        if not creds or not creds.token:
-            st.error("Gagal mendapatkan credentials. Token kosong.")
+        try:
+            flow.fetch_token(code=code)
+            creds = flow.credentials
+            st.write("Hasil credentials:", creds)  # Debug: Periksa apakah creds bukan None
+            if not creds or not creds.token:
+                st.error("Gagal mendapatkan credentials. Token kosong.")
+                return None
+            st.session_state.auth_code_received = True
+            st.session_state.credentials = creds
+            # Lanjutkan proses login...
+            return creds
+        except Exception as e:
+            st.error(f"Gagal mengambil token: {e}")
             return None
-        st.session_state.auth_code_received = True
-        st.session_state.credentials = creds
-        # Lanjutkan proses login...
-        return creds
-    except Exception as e:
-        st.error(f"Gagal mengambil token: {e}")
-        return None
-
-
-    elif "auth_code_received" not in st.session_state:
-        auth_url, _ = flow.authorization_url(prompt="consent", access_type="offline", include_granted_scopes="true")
-        st.markdown(f"### 🔗 [Klik di sini untuk login dengan Google]({auth_url})")
-        return None
-    else:
-        return st.session_state.get("credentials", None)
+    
+    
+        elif "auth_code_received" not in st.session_state:
+            auth_url, _ = flow.authorization_url(prompt="consent", access_type="offline", include_granted_scopes="true")
+            st.markdown(f"### 🔗 [Klik di sini untuk login dengan Google]({auth_url})")
+            return None
+        else:
+            return st.session_state.get("credentials", None)
 
 
    
