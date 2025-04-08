@@ -57,8 +57,8 @@ def get_authenticated_service():
                 except Exception as e:
                     st.error(f"Gagal mengambil token: {e}")
                     return None
-        else:
-            return None
+    else:
+        return None
    
 
 # Bagian login Streamlit
