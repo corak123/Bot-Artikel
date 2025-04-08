@@ -118,6 +118,7 @@ def show_login_prompt():
         credentials = get_authenticated_service()
 
         if credentials:
+            st.write("🔐 berhasil kredensial")
             try:
                 user_info = get_user_info(credentials)
                 st.session_state.credentials = credentials
