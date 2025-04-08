@@ -31,7 +31,7 @@ def save_credentials_to_pickle(credentials, email):
 
 def get_authenticated_service():
     redirect_uri = "https://bot-artikel-auto.streamlit.app/"
-
+    
     flow = Flow.from_client_config(
         {
             "installed": {
@@ -46,16 +46,13 @@ def get_authenticated_service():
         redirect_uri=redirect_uri
     )
 
-    # Ambil kode dari URL setelah login
-    query_params = st.query_params  # Ganti dari deprecated `experimental_get_query_params`
-    code = query_params.get("code", [None])[0]
-    st.write("Kode yang diterima:", code)  # Debug
+    # Ambil kode dari URL setelah redirect
+    code = st.query_params.get("code", [None])[0]
 
-    if code:
+    if code and "auth_code_received" not in st.session_state:
         try:
             flow.fetch_token(code=code)
             creds = flow.credentials
-            st.write("Hasil credentials:", creds)  # Debug: Periksa apakah creds bukan None
             if not creds or not creds.token:
                 st.error("Gagal mendapatkan credentials. Token kosong.")
                 return None
@@ -66,12 +63,14 @@ def get_authenticated_service():
             st.error(f"Gagal mengambil token: {e}")
             return None
 
-    if "auth_code_received" not in st.session_state:
+    elif "auth_code_received" not in st.session_state:
         auth_url, _ = flow.authorization_url(prompt="consent", access_type="offline", include_granted_scopes="true")
         st.markdown(f"### 🔗 [Klik di sini untuk login dengan Google]({auth_url})")
         return None
 
-    return st.session_state.get("credentials", None)
+    else:
+        return st.session_state.get("credentials", None)
+
 
 
 
