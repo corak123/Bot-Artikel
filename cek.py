@@ -1,129 +1,119 @@
 import google.generativeai as genai
-from google.genai import types
-from PIL import Image
-from io import BytesIO
-import base64
-import os
+from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-#from google.oauth2 import service_account
+import streamlit as st
+import pickle
+import os
 import requests
 import re
-import json
-import google.auth
-from google.auth.transport.requests import Request
-from google.oauth2 import service_account
-import requests
-import streamlit as st
-from google.oauth2.service_account import Credentials
+from PIL import Image
+from io import BytesIO
 
-
-# Ganti dengan API Key kamu
-# Pakai API key dari secrets
+# Konfigurasi Gemini API
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
-# Inisialisasi client
-#client = genai.Client(api_key=GEMINI_API_KEY)
-
-# Path ke file service account JSON
-#SERVICE_ACCOUNT_FILE = "credentials.json"
-
-GDRIVE_SCOPES = ["https://www.googleapis.com/auth/drive"]
-
-# Scope akses ke Google Drive
-scopes=[
+# Scope akses ke Drive & Blogger
+SCOPES = [
     "https://www.googleapis.com/auth/blogger",
     "https://www.googleapis.com/auth/drive"
 ]
 
-def save_credentials_to_drive(creds, drive_service, drive_folder_id, filename="user_token.pkl"):
-    with open(filename, "wb") as token_file:
-        pickle.dump(creds, token_file)
-    upload_token_to_drive(drive_service, filename, drive_folder_id, filename)
-    os.remove(filename)  # Hapus file lokal setelah upload
+# Folder Drive untuk menyimpan token
+TOKEN_FOLDER_ID = "1d3NFHLCxqVWJpGGO4dwbPmDok4vrkIX2"
+# Folder Drive untuk upload gambar
+GDRIVE_IMAGE_FOLDER_ID = "1mn0Xd2zsU7DUsSaJp-D8-FbxhsTN78fk"
+# Blog ID tujuan posting
+BLOG_ID = "6869652925231981095"
 
-def load_credentials_from_drive(drive_service, drive_folder_id, filename="user_token.pkl"):
-    if download_token_from_drive(drive_service, filename, drive_folder_id, filename):
-        with open(filename, "rb") as token_file:
-            creds = pickle.load(token_file)
-        os.remove(filename)
-        return creds
-    return None
 
+# ==== CREDENTIALS & SERVICE SETUP ====
 
 def create_drive_service_from_secrets():
-    scopes = ["https://www.googleapis.com/auth/drive"]
     creds = Credentials.from_service_account_info(
         st.secrets["gcp_service_account"],
-        scopes=scopes
+        scopes=SCOPES
     )
     service = build("drive", "v3", credentials=creds)
     return creds, service
 
 
-
-drive_service = create_drive_service_from_secrets()
-drive_folder_id = "1d3NFHLCxqVWJpGGO4dwbPmDok4vrkIX2"
-
-# Simpan token user ke drive
-save_credentials_to_drive(creds, drive_service, drive_folder_id)
-
+def save_credentials_to_drive(creds, drive_service, drive_folder_id, filename="user_token.pkl"):
+    with open(filename, "wb") as token_file:
+        pickle.dump(creds, token_file)
+    upload_token_to_drive(drive_service, filename, drive_folder_id, filename)
+    os.remove(filename)
 
 
-# Endpoint untuk mendapatkan access token baru
-TOKEN_URL = "https://oauth2.googleapis.com/token"
-
-# def get_access_token():
-#     data = {
-#         "client_id": CLIENT_ID,
-#         "client_secret": CLIENT_SECRET,
-#         "refresh_token": REFRESH_TOKEN,
-#         "grant_type": "refresh_token",
-#     }
-    
-#     response = requests.post(TOKEN_URL, data=data)
-#     token_info = response.json()
-    
-#     if "access_token" in token_info:
-#         return token_info["access_token"]
-#     else:
-#         raise Exception(f"Error getting access token: {token_info}")
-
-# Setup credentials dari st.secrets
-credentials = service_account.Credentials.from_service_account_info(
-    st.secrets["gcp_service_account"],
-    scopes=[
-        "https://www.googleapis.com/auth/blogger",
-        "https://www.googleapis.com/auth/drive",
-    ]
-)
-
-# Autentikasi dengan service account
-# Inisialisasi service Blogger
-blogger_service = build("blogger", "v3", credentials=credentials)
-
-# Inisialisasi service Drive (jika kamu pakai)
-drive_service = build("drive", "v3", credentials=credentials)
-
-print("Autentikasi berhasil!")
-
-# ID folder tujuan di Google Drive
-FOLDER_ID = "1mn0Xd2zsU7DUsSaJp-D8-FbxhsTN78fk"
-
-# ID Blog untuk posting
-BLOG_ID = "6869652925231981095"
-
-# Token akses Blogger API
-#BLOGGER_ACCESS_TOKEN = access_token
+def upload_token_to_drive(service, file_path, folder_id, filename):
+    file_metadata = {"name": filename, "parents": [folder_id]}
+    media = MediaFileUpload(file_path, mimetype="application/octet-stream")
+    service.files().create(body=file_metadata, media_body=media).execute()
 
 
+# ==== FORMATTER ====
+
+def extract_title(article_text):
+    lines = article_text.split("\n")
+    title = lines[2].split(":")[0].strip()
+    return title
+
+
+def format_content(article_text):
+    lines = article_text.split("\n")
+    article_text = "\n".join(lines[3:]).strip()
+
+    formatted_text = re.sub(r"\*\*(.*?)\*\*", r"<strong>\1</strong>", article_text)
+    formatted_text = re.sub(r"\*(.*?)\*", r"<em>\1</em>", formatted_text)
+
+    paragraphs = formatted_text.split("\n")
+    html = ""
+    in_list = False
+    for p in paragraphs:
+        p = p.strip()
+        if not p:
+            continue
+        if p.startswith("*"):
+            if not in_list:
+                html += "<ul>"
+                in_list = True
+            html += f"<li>{p[1:].strip()}</li>"
+        else:
+            if in_list:
+                html += "</ul>"
+                in_list = False
+            html += f"<p style='text-indent: 2rem; margin-bottom: 1em;'>{p}</p>"
+    if in_list:
+        html += "</ul>"
+
+    return html
+
+
+# ==== IMAGE & DRIVE ====
+
+def ensure_landscape(image):
+    width, height = image.size
+    return image.rotate(90, expand=True) if height > width else image
+
+
+def upload_image_to_drive(service, file_path, file_name):
+    file_metadata = {'name': file_name, 'parents': [GDRIVE_IMAGE_FOLDER_ID]}
+    media = MediaFileUpload(file_path, mimetype='image/png')
+    file = service.files().create(body=file_metadata, media_body=media, fields="id").execute()
+
+    file_id = file['id']
+    service.permissions().create(fileId=file_id, body={'role': 'reader', 'type': 'anyone'}).execute()
+    return f"https://lh3.googleusercontent.com/d/{file_id}=s0"
+
+
+# ==== POSTING BLOGGER ====
 
 def post_to_blogger_with_creds(title, content, categories, credentials):
     try:
         service = build('blogger', 'v3', credentials=credentials)
         user_info = service.users().get(userId='self').execute()
         blog_id = service.blogs().listByUser(userId='self').execute()['items'][0]['id']
-        
+
         post = {
             "title": title,
             "content": content,
@@ -135,252 +125,63 @@ def post_to_blogger_with_creds(title, content, categories, credentials):
         return False, str(e)
 
 
-def format_content(article_text):
-    # Pisahkan artikel berdasarkan baris dan hapus 5 baris pertama
-    lines = article_text.split("\n")
-    article_text = "\n".join(lines[3:]).strip()  # Ambil baris ke-4 dan seterusnya
+# ==== GENERATE KONTEN ====
 
-    # Gantilah **teks** dengan <strong>teks</strong> tanpa terkena indentasi
-    def replace_bold(match):
-        return f"<strong style='display: inline;'>{match.group(1)}</strong>"
-
-    formatted_text = re.sub(r"\*\*(.*?)\*\*", replace_bold, article_text)
-
-    def replace_italic(match):
-        return f"<em style='display: inline;'>{match.group(1)}</em>"
-
-    # Kemudian ganti *italic*
-    formatted_text = re.sub(r"\*(.*?)\*", replace_italic, formatted_text)
-
-    # Bold nomor di awal kalimat (contoh: "1. ", "2) ")
-    def replace_numbering(match):
-        return f"<strong style='display: inline;'>{match.group(1)}</strong>{match.group(2)}"
-
-    formatted_text = re.sub(r"^(\d+[.)])(\s+)", replace_numbering, formatted_text, flags=re.MULTILINE)
-
-
-    # Konversi bullet list dengan `*` di awal baris menjadi `•` atau <ul><li>
-    paragraphs = formatted_text.split("\n")
-    formatted_paragraphs = []
-    in_list = False  # Menandai apakah sedang berada dalam daftar
-
-    for p in paragraphs:
-        p = p.strip()
-        if not p:
-            continue  # Lewati baris kosong
-
-        if p.startswith("*"):  # Jika dimulai dengan '*', ubah ke bullet list
-            if not in_list:
-                formatted_paragraphs.append("<ul style='margin-left: 1rem;'>")  # Mulai daftar
-                in_list = True
-            formatted_paragraphs.append(f"<li>{p[1:].strip()}</li>")  # Simpan sebagai list item
-        else:
-            if in_list:
-                formatted_paragraphs.append("</ul>")  # Tutup daftar jika sebelumnya dalam daftar
-                in_list = False
-            
-            # Hapus indentasi jika paragraf diawali <strong>
-            if re.match(r"^\s*<strong", p):  
-                formatted_paragraphs.append(f"<p style='margin-bottom: 1em;'>{p}</p>")
-            else:
-                formatted_paragraphs.append(f"<p style='margin-bottom: 1em; text-indent: 2rem;'>{p}</p>")
-
-    if in_list:
-        formatted_paragraphs.append("</ul>")  # Pastikan daftar ditutup
-
-    return "".join(formatted_paragraphs)
-
-
-
-def extract_title(article_text):
-    # Pisahkan artikel berdasarkan baris
-    lines = article_text.split("\n")
-    
-    # Ambil baris pertama sebagai judul (baris pertama setelah menghapus 5 baris pertama)
-    title = lines[2].split(":")[0].strip()  # Ambil judul dari baris ke-6
-    return title
-
-def get_unique_filename(base_name, extension):
-    counter = 1
-    file_name = f"{base_name}{extension}"
-    while os.path.exists(file_name):
-        file_name = f"{base_name}_{counter}{extension}"
-        counter += 1
-    return file_name
-
-def ensure_landscape(image):
-    width, height = image.size
-    if height > width:
-        image = image.rotate(90, expand=True)
-    return image
-
-def upload_to_drive(file_path, file_name):
-    # Metadata file yang akan diupload
-    file_metadata = {'name': file_name, 'parents': [FOLDER_ID]}
-    media = MediaFileUpload(file_path, mimetype='image/png')
-
-    # Mengunggah file ke Google Drive
-    file = service.files().create(body=file_metadata, media_body=media, fields="id").execute()
-    
-    # Mendapatkan ID file yang baru diupload
-    file_id = file.get('id')
-    print(f"File berhasil diunggah ke Google Drive dengan ID: {file_id}")
-    
-    # Menambahkan izin akses publik (bisa dibaca oleh siapa saja)
-    service.permissions().create(
-        fileId=file_id,
-        body={'role': 'reader', 'type': 'anyone'}
-    ).execute()
-    print(f"File {file_name} sekarang dapat diakses secara publik.")
-    
-    # Mengembalikan direct link yang bisa digunakan di <img>
-    direct_link = f"https://lh3.googleusercontent.com/d/{file_id}=s0"
-    return direct_link
-
-def get_blog_categories():
-    if "credentials" not in st.session_state:
-        st.error("Anda harus login terlebih dahulu.")
-        return []
-    
-    credentials = st.session_state.credentials
-    access_token = credentials.token
-
-    # Ambil blog ID user yang sedang login
-    user_info_url = "https://www.googleapis.com/blogger/v3/users/self/blogs"
-    headers = {"Authorization": f"Bearer {access_token}"}
-    user_response = requests.get(user_info_url, headers=headers)
-
-    if user_response.status_code != 200:
-        st.error("Gagal mengambil informasi blog user.")
-        return []
-
-    blogs = user_response.json().get("items", [])
-    if not blogs:
-        st.warning("User ini belum punya blog.")
-        return []
-
-    # Ambil blog ID pertama dari daftar blog user
-    blog_id = blogs[0]["id"]
-
-    # Lanjutkan ambil kategori dari blog tersebut
-    posts_url = f"https://www.googleapis.com/blogger/v3/blogs/{blog_id}/posts?maxResults=10"
-    posts_response = requests.get(posts_url, headers=headers)
-
-    if posts_response.status_code == 200:
-        posts = posts_response.json().get("items", [])
-        labels = set()
-        for post in posts:
-            if "labels" in post:
-                labels.update(post["labels"])
-        return list(labels)
-    else:
-        st.error("Gagal mengambil postingan blog.")
-        return []
-
-
-def post_to_blogger(title, content, selected_categories):
-    url = f"https://www.googleapis.com/blogger/v3/blogs/{BLOG_ID}/posts/"
-    headers = {
-        "Authorization": f"Bearer {BLOGGER_ACCESS_TOKEN}",
-        "Content-Type": "application/json"
-    }
-
-    # Format artikel agar setiap baris menjadi paragraf
-    formatted_content = "".join(f"<p>{line}</p>" for line in content.split("\n") if line.strip())
-
-    data = {
-        "kind": "blogger#post",
-        "title": title,
-        "content": formatted_content,
-        "labels": selected_categories
-    }
-
-    response = requests.post(url, headers=headers, json=data)
-
-    if response.status_code == 200:
-        result = response.json()
-        post_url = result.get("url", "#")
-        return True, post_url
-    else:
-        return False, response.text
-
-
-
-
-def generate_article_and_image(user_input, user_input_2):
+def generate_article_and_image(prompt_text, image_prompt):
     try:
-        # Generate artikel
-        article_response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=f"Tulis artikel 850 kata dengan bahasa yang santai, human like, tentang: {user_input} . Artikel harus SEO-Friendly"
+        model = genai.GenerativeModel("gemini-1.5-pro-latest")
+        response = model.generate_content(
+            f"Tulis artikel 850 kata dengan bahasa yang santai, human like, SEO-Friendly tentang: {prompt_text}"
         )
-        article_text = article_response.text
-        formatted_content = "".join(f"<p>{line}</p>" for line in article_text.split("\n") if line.strip())
+        article_text = response.text
+        return article_text
     except Exception as e:
-        raise RuntimeError(f"Gagal generate artikel: {e}")
+        st.error(f"Gagal generate artikel: {e}")
+        return None
 
-    image_url_1 = None
-    image_url_2 = None
 
-    try:
-        # Generate gambar pertama
-        image_prompt_1 = f"Buat gambar wide aspect ratio 16:9 berdasarkan keyword: {user_input_2}"
-        image_response_1 = client.models.generate_content(
-            model="gemini-2.0-flash-exp-image-generation",
-            contents=image_prompt_1,
-            config=types.GenerateContentConfig(response_modalities=['Text', 'Image'])
-        )
-        image_path_1 = get_unique_filename("generated_image_1", ".png")
-        for part in image_response_1.candidates[0].content.parts:
-            if hasattr(part, "inline_data") and part.inline_data:
-                image = Image.open(BytesIO(part.inline_data.data))
-                image = ensure_landscape(image)
-                image.save(image_path_1)
-                image_url_1 = upload_to_drive(image_path_1, os.path.basename(image_path_1))
-                break  # Stop setelah gambar pertama ditemukan
-        if not image_url_1:
-            raise ValueError("Gambar pertama tidak ditemukan di response Gemini.")
-    except Exception as e:
-        raise RuntimeError(f"Gagal generate gambar pertama: {e}")
+# ==== STREAMLIT UI ====
 
-    try:
-        # Generate gambar kedua
-        image_prompt_2 = f"Buat gambar wide aspect ratio 16:9 yang lain berdasarkan keyword: {user_input_2}"
-        image_response_2 = client.models.generate_content(
-            model="gemini-2.0-flash-exp-image-generation",
-            contents=image_prompt_2,
-            config=types.GenerateContentConfig(response_modalities=['Text', 'Image'])
-        )
-        image_path_2 = get_unique_filename("generated_image_2", ".png")
-        for part in image_response_2.candidates[0].content.parts:
-            if hasattr(part, "inline_data") and part.inline_data:
-                image = Image.open(BytesIO(part.inline_data.data))
-                image = ensure_landscape(image)
-                image.save(image_path_2)
-                image_url_2 = upload_to_drive(image_path_2, os.path.basename(image_path_2))
-                break
-        if not image_url_2:
-            raise ValueError("Gambar kedua tidak ditemukan di response Gemini.")
-    except Exception as e:
-        raise RuntimeError(f"Gagal generate gambar kedua: {e}")
+def main():
+    st.title("📝 Auto Blogger dengan Gemini + Google API")
 
-    try:
-        # Siapkan konten untuk Blogger
-        title = extract_title(article_text)
-        formatted_content = format_content(article_text)
-        blogger_content = f"""
-        <h1 style='text-align: center;'>{user_input}</h1>
-        <br>
-        <img src='{image_url_1}' alt='{user_input}' style='margin-bottom: 1rem;'>
-        <br>
-        {formatted_content}
-        <img src='{image_url_2}' alt='{user_input_2}' style='margin-bottom: 1rem;'>
-        <br>
-        """
-        return title, blogger_content
-    except Exception as e:
-        raise RuntimeError(f"Gagal menyiapkan konten Blogger: {e}")
+    prompt = st.text_input("Masukkan topik artikel:")
+    image_prompt = st.text_input("Masukkan keyword untuk gambar (opsional):")
+
+    if st.button("🔄 Generate dan Posting"):
+        with st.spinner("Menghasilkan konten..."):
+            creds, drive_service = create_drive_service_from_secrets()
+            article = generate_article_and_image(prompt, image_prompt)
+
+            if article:
+                title = extract_title(article)
+                html_content = format_content(article)
+
+                # Simpan dan upload gambar dummy (nanti diganti dengan image AI jika tersedia)
+                dummy_image = Image.new("RGB", (1280, 720), color="lightblue")
+                dummy_image = ensure_landscape(dummy_image)
+                image_path = "thumbnail.png"
+                dummy_image.save(image_path)
+
+                img_url = upload_image_to_drive(drive_service, image_path, "thumbnail.png")
+
+                # Tambahkan gambar di atas artikel
+                final_html = f"<img src='{img_url}' style='width: 100%; border-radius: 1rem;' /><br>{html_content}"
+
+                ok, url_or_error = post_to_blogger_with_creds(
+                    title=title,
+                    content=final_html,
+                    categories=["Teknologi", "AI"],
+                    credentials=creds
+                )
+
+                if ok:
+                    st.success(f"✅ Berhasil diposting! [Lihat di sini]({url_or_error})")
+                else:
+                    st.error(f"Gagal posting: {url_or_error}")
+
+                os.remove(image_path)
 
 
 if __name__ == "__main__":
-    generate_article_and_image(user_input, user_input_2)
+    main()
