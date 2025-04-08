@@ -97,6 +97,9 @@ st.markdown("""
 
 
 
+drive_service = create_drive_service_from_secrets()
+
+
 # 🖼️ Sidebar Profil
 def sidebar_profile():
     with st.sidebar:
