@@ -47,7 +47,7 @@ def get_authenticated_service():
     )
 
     # Ambil kode dari URL setelah login
-    query_params = st.experimental_get_query_params()
+    query_params = st.query_params
     code = query_params.get("code", [None])[0]
 
     if code and "auth_code_received" not in st.session_state:
