@@ -57,7 +57,6 @@ def get_authenticated_service():
                 except Exception as e:
                     st.error(f"Gagal mengambil token: {e}")
                     return None
-            st.stop()
         else:
             return None
    
