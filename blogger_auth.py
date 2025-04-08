@@ -50,7 +50,7 @@ def get_authenticated_service():
         flow = Flow.from_client_config(
             client_config,
             scopes=SCOPES,
-            redirect_uri='http://localhost'
+            redirect_uri='https://bot-artikel-auto.streamlit.app/'
         )
         auth_url, _ = flow.authorization_url(
             access_type='offline',
