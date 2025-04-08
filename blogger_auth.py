@@ -34,7 +34,7 @@ def get_authenticated_service():
 
     flow = Flow.from_client_config(
         {
-            "installed": {
+            "web": {
                 "client_id": st.secrets["google_oauth"]["client_id"],
                 "client_secret": st.secrets["google_oauth"]["client_secret"],
                 "redirect_uris": [redirect_uri],
