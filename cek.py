@@ -38,26 +38,37 @@ scopes=[
 # Endpoint untuk mendapatkan access token baru
 TOKEN_URL = "https://oauth2.googleapis.com/token"
 
-def get_access_token():
-    data = {
-        "client_id": CLIENT_ID,
-        "client_secret": CLIENT_SECRET,
-        "refresh_token": REFRESH_TOKEN,
-        "grant_type": "refresh_token",
-    }
+# def get_access_token():
+#     data = {
+#         "client_id": CLIENT_ID,
+#         "client_secret": CLIENT_SECRET,
+#         "refresh_token": REFRESH_TOKEN,
+#         "grant_type": "refresh_token",
+#     }
     
-    response = requests.post(TOKEN_URL, data=data)
-    token_info = response.json()
+#     response = requests.post(TOKEN_URL, data=data)
+#     token_info = response.json()
     
-    if "access_token" in token_info:
-        return token_info["access_token"]
-    else:
-        raise Exception(f"Error getting access token: {token_info}")
+#     if "access_token" in token_info:
+#         return token_info["access_token"]
+#     else:
+#         raise Exception(f"Error getting access token: {token_info}")
 
+# Setup credentials dari st.secrets
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"],
+    scopes=[
+        "https://www.googleapis.com/auth/blogger",
+        "https://www.googleapis.com/auth/drive",
+    ]
+)
 
 # Autentikasi dengan service account
-# Bangun service API
-service = build("blogger", "v3", credentials=credentials)
+# Inisialisasi service Blogger
+blogger_service = build("blogger", "v3", credentials=credentials)
+
+# Inisialisasi service Drive (jika kamu pakai)
+drive_service = build("drive", "v3", credentials=credentials)
 
 print("Autentikasi berhasil!")
 
