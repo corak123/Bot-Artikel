@@ -3,23 +3,20 @@ from cek import generate_article_and_image, post_to_blogger_with_creds, create_d
 from blogger_auth import get_authenticated_service, save_credentials_to_pickle, get_user_info
 from drive_token_utils import upload_token_to_drive, download_token_from_drive
 
-#st.set_page_config(page_title="Auto Posting Blogger Bot", layout="centered")
-#st.title("🤖 Auto Posting ke Blogger dengan Gemini AI")
-
-# 2. Setelah login, tampilkan interface utama
 st.markdown("""
 Masukkan topik artikel dan prompt untuk Gemini AI. Bot ini akan:
 1. Menghasilkan artikel otomatis
 2. Menghasilkan gambar otomatis
-3. Artikel SEO Firendly
+3. Artikel SEO Friendly
 4. Posting langsung ke Blogger melalui API
 """)
-
 
 user_input = st.text_input("Masukkan judul artikel:")
 user_input_2 = st.text_area("Masukkan keyword gambar:", height=100)
 
+folder_id = "1d3NFHLCxqVWJpGGO4dwbPmDok4vrkIX2"  # ID folder token di Google Drive
 
+# Fungsi tombol utama
 def submit_button():
     col1, col2 = st.columns(2)
 
@@ -29,147 +26,94 @@ def submit_button():
     with col2:
         cancel_clicked = st.button("❌ Batal")
 
-    # Jika user klik batal
     if cancel_clicked:
         st.session_state["cancelled"] = True
         st.warning("🚫 Pembuatan artikel dibatalkan.")
-        return  # Stop fungsi agar tidak lanjut ke bawah
+        return
 
-    # Jika user klik generate
     if generate_clicked:
-        # Cek apakah user sebelumnya sudah klik batal
         if st.session_state.get("cancelled"):
             st.warning("Aksi dibatalkan. Silakan klik Generate lagi jika ingin memulai.")
-            # Reset cancelled flag agar bisa jalan lagi
             st.session_state["cancelled"] = False
             return
 
         if not user_input or not user_input_2:
             st.warning("Harap isi Topik dan Keyword terlebih dahulu.")
-        elif not selected_categories:
-            st.warning("Pilih minimal satu kategori untuk postingan.")
         else:
             with st.spinner("Sedang memproses artikel dan memposting ke Blogger..."):
                 try:
                     title, content = generate_article_and_image(user_input, user_input_2)
-                    success, result = post_to_blogger_with_creds(user_input, content, selected_categories, st.session_state.credentials)
+                    success, result = post_to_blogger_with_creds(user_input, content, ["Teknologi"], st.session_state.credentials)
 
                     if success:
                         st.success("✅ Artikel berhasil diposting!")
                         st.write(f"**Link Posting:** [Lihat artikel]({result})")
-                        st.session_state["cancelled"] = False  # Reset batal setelah berhasil
+                        st.session_state["cancelled"] = False
                     else:
                         st.error(f"❌ Gagal posting: {result}")
                 except Exception as e:
                     st.error(f"❌ Terjadi kesalahan: {e} silahkan coba lagi...")
 
-
 # Tombol Logout
 def logout():
-    """Fungsi logout dan tandai bahwa user baru logout"""
     st.session_state.pop("credentials", None)
     st.session_state.just_logged_out = True
     st.rerun()
 
-# 🔧 CSS untuk mengatur lebar sidebar
+# CSS
 st.markdown("""
     <style>
-        /* Ubah ukuran sidebar sebenarnya */
         section[data-testid="stSidebar"] {
             min-width: 0px;
             max-width: 200px;
             width: 200px;
         }
-
-        /* Supaya kontennya ikut muat */
         section[data-testid="stSidebar"] > div:first-child {
             width: 200px;
         }
-
-        /* (Opsional) agar konten utama tidak terlalu sempit */
         div[data-testid="stAppViewContainer"] > div:nth-child(1) {
             margin-left: 320px;
         }
     </style>
 """, unsafe_allow_html=True)
 
-# Ganti ini dengan ID folder Google Drive kamu
-folder_id = "1d3NFHLCxqVWJpGGO4dwbPmDok4vrkIX2"
-
+# Autentikasi dan token
 creds, drive_service = create_drive_service_from_secrets()
-save_credentials_to_drive(creds, drive_service, folder_id)
 
-
-
-# 🖼️ Sidebar Profil
-def sidebar_profile():
-    with st.sidebar:
-        st.markdown("## 👤 Profil")
-        if "user_picture" in st.session_state and st.session_state.user_picture:
-            st.image(st.session_state.user_picture, width=80)
-        if "user_name" in st.session_state:
-            st.markdown(f"**{st.session_state.user_name}**")
-        if "user_email" in st.session_state:
-            st.caption(st.session_state.user_email)
-        st.markdown("---")
-        if st.button("🚪 Logout", key="sidebar_logout"):
-            logout()
-
-def show_login_prompt():
-    st.info("🚪 Anda telah logout.")
-    st.write("🔐 Klik tombol di bawah untuk login dengan Google")
-
-    if st.button("Login dengan Google"):
-        credentials = get_authenticated_service()
-
-        if credentials:
-            st.write("🔐 berhasil kredensial")
-            try:
-                user_info = get_user_info(credentials)
-                st.session_state.credentials = credentials
-                st.session_state.user_email = user_info["email"]
-                st.session_state.user_name = user_info["name"]
-                st.session_state.user_picture = user_info["picture"]
-                save_credentials_to_pickle(credentials, user_info["email"])
-                st.session_state.pop("just_logged_out", None)
-                st.success("✅ Login berhasil!")
-                st.rerun()
-            except Exception as e:
-                st.error(f"Gagal ini login: {e}")
-        else:
-            st.warning("🕒 Menunggu kode otentikasi dari Google...")
-
-
-
-# ✅ Cek apakah user baru logout
-if st.session_state.get("just_logged_out"):
-    show_login_prompt()
-    st.stop()
-
-#✅ Jika belum login
 if "credentials" not in st.session_state:
     st.info("🔐 Silakan login terlebih dahulu.")
     if st.button("🔐 Login dengan Google"):
         try:
-            credentials  = get_authenticated_service()
-            user_info = get_user_info(credentials )
-            st.session_state.credentials = credentials 
+            credentials = get_authenticated_service()
+            user_info = get_user_info(credentials)
+            st.session_state.credentials = credentials
             st.session_state.user_email = user_info["email"]
             st.session_state.user_name = user_info["name"]
             st.session_state.user_picture = user_info["picture"]
-            save_credentials_to_pickle(credentials , user_info["email"])
+            save_credentials_to_pickle(credentials, user_info["email"])
+            upload_token_to_drive(drive_service, credentials, user_info["email"], folder_id)
             st.success("✅ Login berhasil!")
             st.rerun()
         except Exception as e:
-            st.error(f"Gagal sihh login: {e}")
+            st.error(f"Gagal login: {e}")
     st.stop()
 
-# ✅ Jika sudah login, tampilkan konten dan tombol logout
-# st.success("✅ Selamat datang! Anda sudah login.")
-#sidebar_profile()
+# Sidebar profil
+with st.sidebar:
+    st.markdown("## 👤 Profil")
+    if "user_picture" in st.session_state:
+        st.image(st.session_state.user_picture, width=80)
+    if "user_name" in st.session_state:
+        st.markdown(f"**{st.session_state.user_name}**")
+    if "user_email" in st.session_state:
+        st.caption(st.session_state.user_email)
+    st.markdown("---")
+    if st.button("🚪 Logout", key="sidebar_logout"):
+        logout()
 
 submit_button()
-if st.button("🚪 Logout"):  
+
+if st.button("🚪 Logout Bawah"):
     logout()
 
 st.markdown("---")
