@@ -82,6 +82,7 @@ def get_authenticated_service():
         if code:
             flow.fetch_token(code=code)
             creds = flow.credentials
+            print(creds.valid)  # True kalau masih aktif
             user_info = get_user_info(creds)
             st.session_state["user_email"] = user_info["email"]
             st.session_state["user_name"] = user_info["name"]
