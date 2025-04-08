@@ -37,6 +37,23 @@ def save_credentials_to_drive(credentials, user_email, drive_service):
 
     print(f"✅ Token berhasil disimpan untuk {user_email}")
 
+# ✅ Fungsi tambahan: Simpan token ke folder lokal
+def save_credentials_to_local(credentials, user_email, folder="tokens"):
+    os.makedirs(folder, exist_ok=True)
+    file_path = os.path.join(folder, f"token_{user_email}.json")
+    with open(file_path, "w") as f:
+        f.write(credentials.to_json())
+
+# ✅ (Opsional) Fungsi untuk load dari lokal
+def load_credentials_from_local(user_email, folder="tokens"):
+    from google.oauth2.credentials import Credentials
+    file_path = os.path.join(folder, f"token_{user_email}.json")
+    if os.path.exists(file_path):
+        with open(file_path, "r") as f:
+            data = f.read()
+        return Credentials.from_authorized_user_info(json.loads(data))
+    return None
+
 def find_or_create_folder(service):
     # Cek apakah folder sudah ada
     query = f"name='{DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed = false"
