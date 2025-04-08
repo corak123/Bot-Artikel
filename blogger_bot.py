@@ -162,7 +162,7 @@ if st.session_state.get("just_logged_out"):
 # ✅ Jika sudah login, tampilkan konten dan tombol logout
 # st.success("✅ Selamat datang! Anda sudah login.")
 #sidebar_profile()
-submit_button()
+#submit_button()
 if st.button("🚪 Logout"):  
     logout()
 
