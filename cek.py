@@ -57,7 +57,9 @@ def create_drive_service_from_secrets():
         st.secrets["gcp_service_account"],
         scopes=scopes
     )
-    return build("drive", "v3", credentials=creds)
+    service = build("drive", "v3", credentials=creds)
+    return creds, service
+
 
 
 drive_service = create_drive_service_from_secrets()
