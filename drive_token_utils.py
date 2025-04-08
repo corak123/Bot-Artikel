@@ -8,6 +8,7 @@ import streamlit as st
 
 # Folder Google Drive untuk menyimpan token
 DRIVE_FOLDER_NAME = "blogger_tokens"
+TOKEN_FOLDER_ID = st.secrets["google_drive"]["folder_id"]
 
 def get_drive_service():
     drive_creds = Credentials.from_authorized_user_info(st.secrets["gcp_service_account"])
