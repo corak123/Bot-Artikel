@@ -33,6 +33,19 @@ scopes=[
     "https://www.googleapis.com/auth/drive"
 ]
 
+def save_credentials_to_drive(creds, drive_service, drive_folder_id, filename="user_token.pkl"):
+    with open(filename, "wb") as token_file:
+        pickle.dump(creds, token_file)
+    upload_token_to_drive(drive_service, filename, drive_folder_id, filename)
+    os.remove(filename)  # Hapus file lokal setelah upload
+
+def load_credentials_from_drive(drive_service, drive_folder_id, filename="user_token.pkl"):
+    if download_token_from_drive(drive_service, filename, drive_folder_id, filename):
+        with open(filename, "rb") as token_file:
+            creds = pickle.load(token_file)
+        os.remove(filename)
+        return creds
+    return None
 
 
 # Endpoint untuk mendapatkan access token baru
