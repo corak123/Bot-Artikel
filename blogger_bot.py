@@ -1,5 +1,5 @@
 import streamlit as st
-from cek import generate_article_and_image, get_blog_categories, post_to_blogger_with_creds, create_drive_service_from_secrets
+from cek import generate_article_and_image, post_to_blogger_with_creds, create_drive_service_from_secrets
 from blogger_auth import get_authenticated_service, save_credentials_to_pickle, get_user_info
 from drive_token_utils import upload_token_to_drive, download_token_from_drive
 
@@ -19,8 +19,6 @@ Masukkan topik artikel dan prompt untuk Gemini AI. Bot ini akan:
 user_input = st.text_input("Masukkan judul artikel:")
 user_input_2 = st.text_area("Masukkan keyword gambar:", height=100)
 
-categories = get_blog_categories()
-selected_categories = st.multiselect("Pilih kategori untuk postingan:", options=categories)
 
 def submit_button():
     col1, col2 = st.columns(2)
