@@ -47,29 +47,26 @@ def get_authenticated_service():
     )
 
     # Ambil kode dari URL setelah login
-    query_params = st.query_params
     code = query_params.get("code", [None])[0]
+    st.write("Kode yang diterima:", code)  # Debug
 
-    if code and "auth_code_received" not in st.session_state:
-        try:
-            flow.fetch_token(code=code)
-            creds = flow.credentials
-            user_info = get_user_info(creds)
 
-            st.session_state.auth_code_received = True
-            st.session_state.credentials = creds
-            st.session_state.user_email = user_info["email"]
-            st.session_state.user_name = user_info["name"]
-            st.session_state.user_picture = user_info["picture"]
-
-            save_credentials_to_pickle(creds, user_info["email"])
-
-            # Bersihkan kode di URL dengan st.experimental_set_query_params
-            st.experimental_set_query_params()
-            st.rerun()
-        except Exception as e:
-            st.error(f"Gagal mengambil token: {e}")
+    if code:
+    try:
+        flow.fetch_token(code=code)
+        creds = flow.credentials
+        st.write("Hasil credentials:", creds)  # Debug: Periksa apakah creds bukan None
+        if not creds or not creds.token:
+            st.error("Gagal mendapatkan credentials. Token kosong.")
             return None
+        st.session_state.auth_code_received = True
+        st.session_state.credentials = creds
+        # Lanjutkan proses login...
+        return creds
+    except Exception as e:
+        st.error(f"Gagal mengambil token: {e}")
+        return None
+
 
     elif "auth_code_received" not in st.session_state:
         auth_url, _ = flow.authorization_url(prompt="consent", access_type="offline", include_granted_scopes="true")
