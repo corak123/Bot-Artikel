@@ -68,7 +68,7 @@ def get_authenticated_service():
             return None
     
     
-        elif "auth_code_received" not in st.session_state:
+    elif "auth_code_received" not in st.session_state:
             auth_url, _ = flow.authorization_url(prompt="consent", access_type="offline", include_granted_scopes="true")
             st.markdown(f"### 🔗 [Klik di sini untuk login dengan Google]({auth_url})")
             return None
