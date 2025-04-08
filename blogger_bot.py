@@ -110,29 +110,29 @@ def sidebar_profile():
         if st.button("🚪 Logout", key="sidebar_logout"):
             logout()
 
-def show_login_prompt():
-    st.info("🚪 Anda telah logout.")
-    st.write("🔐 Klik tombol di bawah untuk login dengan Google")
+# def show_login_prompt():
+#     st.info("🚪 Anda telah logout.")
+#     st.write("🔐 Klik tombol di bawah untuk login dengan Google")
 
-    if st.button("Login dengan Google"):
-        credentials = get_authenticated_service()
+#     if st.button("Login dengan Google"):
+#         credentials = get_authenticated_service()
 
-        if credentials:
-            st.write("🔐 berhasil kredensial")
-            try:
-                user_info = get_user_info(credentials)
-                st.session_state.credentials = credentials
-                st.session_state.user_email = user_info["email"]
-                st.session_state.user_name = user_info["name"]
-                st.session_state.user_picture = user_info["picture"]
-                save_credentials_to_pickle(credentials, user_info["email"])
-                st.session_state.pop("just_logged_out", None)
-                st.success("✅ Login berhasil!")
-                st.rerun()
-            except Exception as e:
-                st.error(f"Gagal ini login: {e}")
-        else:
-            st.warning("🕒 Menunggu kode otentikasi dari Google...")
+#         if credentials:
+#             st.write("🔐 berhasil kredensial")
+#             try:
+#                 user_info = get_user_info(credentials)
+#                 st.session_state.credentials = credentials
+#                 st.session_state.user_email = user_info["email"]
+#                 st.session_state.user_name = user_info["name"]
+#                 st.session_state.user_picture = user_info["picture"]
+#                 save_credentials_to_pickle(credentials, user_info["email"])
+#                 st.session_state.pop("just_logged_out", None)
+#                 st.success("✅ Login berhasil!")
+#                 st.rerun()
+#             except Exception as e:
+#                 st.error(f"Gagal ini login: {e}")
+#         else:
+#             st.warning("🕒 Menunggu kode otentikasi dari Google...")
 
 
 
