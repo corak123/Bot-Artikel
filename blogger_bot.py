@@ -161,7 +161,7 @@ if "credentials" not in st.session_state:
 
 # ✅ Jika sudah login, tampilkan konten dan tombol logout
 # st.success("✅ Selamat datang! Anda sudah login.")
-sidebar_profile()
+#sidebar_profile()
 submit_button()
 if st.button("🚪 Logout"):  
     logout()
