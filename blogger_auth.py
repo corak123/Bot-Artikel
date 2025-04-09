@@ -66,21 +66,27 @@ def get_authenticated_service():
 
     if not creds or not creds.valid:
         # Login OAuth
-        flow = Flow.from_client_config(
-            client_config,
-            scopes=SCOPES,
-            redirect_uri='https://bot-artikel-auto.streamlit.app/'
-        )
-        auth_url, _ = flow.authorization_url(
-            access_type='offline',
-            prompt='consent'
-        )
+        # flow = Flow.from_client_config(
+        #     client_config,
+        #     scopes=SCOPES,
+        #     redirect_uri='https://bot-artikel-auto.streamlit.app/'
+        # )
+        # auth_url, _ = flow.authorization_url(
+        #     access_type='offline',
+        #     prompt='consent'
+        # )
 
-        st.markdown(f"🔐 [Klik untuk login dengan Google]({auth_url})")
-        st.stop()
+        # st.markdown(f"🔐 [Klik untuk login dengan Google]({auth_url})")
+        # st.stop()
         #code = st.text_input("Masukkan kode autentikasi Google di sini:")
+        
         query_params = st.query_params
         if "code" in query_params:
+            flow = Flow.from_client_config(
+                client_config,
+                scopes=SCOPES,
+                redirect_uri='https://bot-artikel-auto.streamlit.app/'
+            )
             code = query_params["code"][0]
             try:
                 flow.fetch_token(code=code)
