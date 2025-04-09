@@ -71,10 +71,10 @@ def get_authenticated_service():
             scopes=SCOPES,
             redirect_uri='https://bot-artikel-auto.streamlit.app/'
         )
-        auth_url, _ = flow.authorization_url(
-            access_type='offline',
-            prompt='consent'
-        )
+        # auth_url, _ = flow.authorization_url(
+        #     access_type='offline',
+        #     prompt='consent'
+        # )
 
         st.markdown(f"🔐 [Klik untuk login dengan Google]({auth_url})")
         #code = st.text_input("Masukkan kode autentikasi Google di sini:")
