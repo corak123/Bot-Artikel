@@ -76,7 +76,7 @@ def get_authenticated_service():
             prompt='consent'
         )
 
-        st.markdown(f"🔐 [Klik untuk login dengan Google]({auth_url})")
+        st.markdown(f"🔐 [Klik untuk login dengan Google]({auth_url})", unsafe_allow_html=True)
         # st.stop()
         #code = st.text_input("Masukkan kode autentikasi Google di sini:")
         
