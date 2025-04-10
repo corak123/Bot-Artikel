@@ -44,11 +44,11 @@ def get_user_info(creds):
 
 
 def get_auth_url():
-    flow = Flow.from_client_secrets_file(
-        CLIENT_SECRET_FILE,
-        scopes=SCOPES,
-        redirect_uri=REDIRECT_URI
-    )
+    flow = Flow.from_client_config(
+            client_config,
+            scopes=SCOPES,
+            redirect_uri='https://bot-artikel-auto.streamlit.app/'
+        )
     auth_url, _ = flow.authorization_url(prompt='consent')
     return auth_url
 
