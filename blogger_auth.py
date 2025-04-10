@@ -7,7 +7,13 @@ from google_auth_oauthlib.flow import Flow
 from google.auth.transport.requests import Request
 from drive_token_utils import upload_token_to_drive, load_token_from_drive
 
-SCOPES = ['https://www.googleapis.com/auth/blogger']
+SCOPES = [
+    "https://www.googleapis.com/auth/blogger",
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "openid"
+]
+
 
 # Ambil client_id dan client_secret dari st.secrets
 CLIENT_ID = st.secrets["google_oauth"]["client_id"]
