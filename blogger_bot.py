@@ -4,6 +4,14 @@ from drive_token_utils import save_credentials_to_drive
 
 st.set_page_config(page_title="Bot Blogger Otomatis", page_icon="🤖")
 
+if "user_name" not in st.session_state:
+    st.session_state.user_name = None
+if "user_picture" not in st.session_state:
+    st.session_state.user_picture = None
+if "user_email" not in st.session_state:
+    st.session_state.user_email = None
+
+
 # Jika user belum login
 if "credentials" not in st.session_state:
     st.title("🤖 Bot Artikel dan Posting Blogger Otomatis")
