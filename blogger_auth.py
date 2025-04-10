@@ -71,6 +71,21 @@ def get_authenticated_service():
             scopes=SCOPES,
             redirect_uri='https://bot-artikel-auto.streamlit.app/'
         )
+        query_params = st.query_params
+        if code:
+            flow.fetch_token(code=code)
+            creds = flow.credentials
+            st.success("✅ Login Google berhasil!")
+            return creds
+        else:
+            auth_url, _ = flow.authorization_url(
+                prompt='consent',
+                access_type='offline',
+                include_granted_scopes='true'
+            )
+            st.markdown(f"[Klik di sini untuk login Google]({auth_url})", unsafe_allow_html=True)
+            st.stop()
+
         flow.fetch_token(code=code)
         creds = flow.credentials
         st.success("✅ Login Google berhasil!")
