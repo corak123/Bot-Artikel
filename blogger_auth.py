@@ -72,6 +72,7 @@ def get_authenticated_service():
             redirect_uri='https://bot-artikel-auto.streamlit.app/'
         )
         query_params = st.query_params
+        code = query_params.get("code")
         if code:
             flow.fetch_token(code=code)
             creds = flow.credentials
