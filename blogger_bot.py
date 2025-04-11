@@ -1,7 +1,7 @@
 import streamlit as st
 from blogger_auth import get_auth_url, handle_auth_callback, get_drive_service
 from drive_token_utils import save_credentials_to_drive
-from cek import generate_article_and_image, post_to_blogger
+from cek import generate_article_and_image, post_to_blogger_with_creds
 
 st.set_page_config(page_title="Bot Blogger Otomatis", page_icon="🤖")
 
