@@ -27,7 +27,7 @@ if "credentials" not in st.session_state:
         with st.spinner("Sedang menyelesaikan proses login..."):
             try:
                 code = query_params["code"][0]
-                #if handle_auth_callback(code):
+                if handle_auth_callback(code):
                     # Simpan token ke Google Drive
                     try:
                         drive_service = get_drive_service()
