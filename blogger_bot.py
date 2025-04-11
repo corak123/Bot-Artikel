@@ -65,6 +65,13 @@ else:
     st.write(f"📧 Email: {st.session_state.user_email}")
     st.write("---")
     st.write(st.session_state.credentials)
+    creds = st.session_state.credentials
+
+    st.write("Token:", creds.token)
+    st.write("Refresh Token:", creds.refresh_token)
+    st.write("Client ID:", creds.client_id)
+    st.write("Expiry:", creds.expiry)
+    st.write("Scopes:", creds.scopes)
 
     st.subheader("✅ Bot Siap Digunakan")
     st.write("Silakan lanjutkan fitur bot kamu di sini... 🚀")
