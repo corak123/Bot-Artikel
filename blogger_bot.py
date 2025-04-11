@@ -64,5 +64,7 @@ else:
     #st.image(st.session_state.user_picture, width=100)
     st.write(f"📧 Email: {st.session_state.user_email}")
     st.write("---")
+    st.write(st.session_state.credentials)
+
     st.subheader("✅ Bot Siap Digunakan")
     st.write("Silakan lanjutkan fitur bot kamu di sini... 🚀")
