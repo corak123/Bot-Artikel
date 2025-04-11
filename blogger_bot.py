@@ -65,16 +65,17 @@ else:
     #st.image(st.session_state.user_picture, width=100)
     st.write(f"📧 Email: {st.session_state.user_email}")
     st.write("---")
-    st.write(st.session_state.credentials)
     creds = st.session_state.credentials
-
-    st.write("Token:", creds.token)
-    st.write("Refresh Token:", creds.refresh_token)
-    st.write("Client ID:", creds.client_id)
-    st.write("Expiry:", creds.expiry)
-    st.write("Scopes:", creds.scopes)
 
     st.subheader("✅ Bot Siap Digunakan")
     st.write("Silakan lanjutkan fitur bot kamu di sini... 🚀")
+    st.subheader("✅ Bot Siap Digunakan")
 
-    generate_article_and_image(kaya, kaya)
+    # Input dari user
+    judul = st.text_input("Masukkan topik artikel", placeholder="Contoh: Teknologi Masa Depan")
+    
+    # Tombol generate
+    if st.button("🚀 Generate Artikel dan Gambar") and judul:
+        title, content = generate_article_and_image(judul, judul)
+        st.markdown(content, unsafe_allow_html=True)
+
