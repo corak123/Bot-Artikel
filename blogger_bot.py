@@ -11,6 +11,10 @@ if "user_picture" not in st.session_state:
 if "user_email" not in st.session_state:
     st.session_state.user_email = None
 
+for key in ["user_email", "user_name", "user_picture"]:
+    if key not in st.session_state:
+        st.session_state[key] = None
+
 
 # Jika user belum login
 if "credentials" not in st.session_state:
