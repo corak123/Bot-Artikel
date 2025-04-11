@@ -139,5 +139,6 @@ if "credentials" not in st.session_state:
     creds = get_authenticated_service()
     if creds:
         st.session_state["credentials"] = creds
+        print(creds)
         st.rerun()
     st.stop()
