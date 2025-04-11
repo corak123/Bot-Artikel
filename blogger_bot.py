@@ -66,11 +66,7 @@ else:
     st.write(f"📧 Email: {st.session_state.user_email}")
     st.write("---")
     creds = st.session_state.credentials
-
     st.subheader("✅ Bot Siap Digunakan")
-    st.write("Silakan lanjutkan fitur bot kamu di sini... 🚀")
-    st.subheader("✅ Bot Siap Digunakan")
-
     # Input dari user
     judul = st.text_input("Masukkan topik artikel", placeholder="Contoh: Teknologi Masa Depan")
     
