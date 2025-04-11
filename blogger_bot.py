@@ -77,4 +77,4 @@ else:
     st.subheader("✅ Bot Siap Digunakan")
     st.write("Silakan lanjutkan fitur bot kamu di sini... 🚀")
 
-    generate_article_and_image()
+    generate_article_and_image(kaya, kaya)
