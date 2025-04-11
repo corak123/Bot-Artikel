@@ -61,7 +61,7 @@ if "credentials" not in st.session_state:
 # Jika user sudah login
 else:
     st.success(f"Selamat datang, {st.session_state.user_name} 👋")
-    st.image(st.session_state.user_picture, width=100)
+    #st.image(st.session_state.user_picture, width=100)
     st.write(f"📧 Email: {st.session_state.user_email}")
     st.write("---")
     st.subheader("✅ Bot Siap Digunakan")
