@@ -71,14 +71,13 @@ def get_authenticated_service():
             st.error(f"❌ Gagal login: {e}")
             st.stop()
     else:
-        # auth_url, _ = flow.authorization_url(
-        #     prompt='consent',
-        #     access_type='offline',
-        #     include_granted_scopes='true'
-        # )
+        auth_url, _ = flow.authorization_url(
+            prompt='consent',
+            access_type='offline',
+            include_granted_scopes='true'
+        )
         # st.markdown(f"[🔐 Klik di sini untuk login Google]({auth_url})", unsafe_allow_html=True)
         # st.stop()
-        # auth_url = auth_url
         st.markdown(
             f"""
             <a href="{auth_url}" target="_self">
