@@ -66,6 +66,10 @@ else:
     st.write(f"📧 Email: {st.session_state.user_email}")
     st.write("---")
     creds = st.session_state.credentials
+    save_credentials_to_local(
+                            creds,
+                            user_email=st.session_state.user_email
+                        )
     st.subheader("✅ Bot Siap Digunakan")
     # Input dari user
 
