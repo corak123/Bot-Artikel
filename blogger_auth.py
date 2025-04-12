@@ -109,4 +109,71 @@ def get_authenticated_service():
         )
 
 
+# --- Daftar serial valid
+VALID_SERIALS = ["ABC123", "XYZ789", "SN-2025-001"]
+
+# --- Cek status verifikasi serial
+if "serial_verified" not in st.session_state:
+    st.session_state.serial_verified = False
+
+# --- CSS untuk styling
+st.markdown("""
+    <style>
+    .serial-box {
+        background-color: #f0f2f6;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        margin: auto;
+        text-align: center;
+    }
+    .serial-input input {
+        padding: 0.75rem;
+        font-size: 1rem;
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+    .serial-btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 0.6rem 1.5rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: 0.3s ease;
+    }
+    .serial-btn:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# --- Tampilan form serial number
+if not st.session_state.serial_verified:
+    st.markdown('<div class="serial-box">', unsafe_allow_html=True)
+    st.markdown("### 🔒 Masukkan Serial Number")
+
+    serial = st.text_input("", placeholder="Contoh: ABC123", key="serial", label_visibility="collapsed")
+
+    if st.button("✅ Verifikasi", key="verify_btn"):
+        if serial in VALID_SERIALS:
+            st.session_state.serial_verified = True
+            st.success("✅ Serial number valid. Silakan lanjut.")
+            st.rerun()
+        else:
+            st.error("❌ Serial number tidak valid. Coba lagi.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# --- Kalau sudah verified
+else:
+    st.success("✅ Serial number terverifikasi. Akses diberikan!")
+    # lanjut ke aplikasi utama kamu, misal login Google atau dashboard
+
 
