@@ -35,7 +35,7 @@ def logout():
             del st.session_state[key]
 
     # Hapus parameter `code` dari URL
-    st.experimental_set_query_params()
+    st.query_params()
 
     st.success("✅ Kamu berhasil logout.")
     st.rerun()
