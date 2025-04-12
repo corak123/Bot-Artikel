@@ -9,8 +9,11 @@ if "credentials" not in st.session_state:
 # Setelah login berhasil
 creds = st.session_state["credentials"]
 email = st.session_state["user_email"]
-name = st.session_state["user_name"]
+name = st.session_state.get("user_name", "kamu")
 picture = st.session_state.get("user_picture")
+if picture:
+    st.image(picture, width=100)
+
 
 st.success(f"Hai, {name}!")
 st.image(picture, width=100)
