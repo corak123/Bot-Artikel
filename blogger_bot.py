@@ -57,6 +57,7 @@ if "credentials" not in st.session_state:
         flow.fetch_token(code=code)
         creds = flow.credentials
         st.session_state["credentials"] = creds
+        user_info = get_user_info(creds)
     else:
         serial_number()
 
