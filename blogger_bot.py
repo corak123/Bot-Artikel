@@ -58,6 +58,12 @@ if "credentials" not in st.session_state:
         creds = flow.credentials
         st.session_state["credentials"] = creds
         user_info = get_user_info(creds)
+        # Simpan di session
+        st.session_state["credentials"] = creds
+        st.session_state["user_email"] = user_info["email"]
+        st.session_state["user_name"] = user_info["name"]
+        st.session_state["user_picture"] = user_info["picture"]
+        st.session_state["serial_verified"] = True  # <--- Tambahkan ini      
     else:
         serial_number()
 
