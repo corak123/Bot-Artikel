@@ -25,7 +25,6 @@ def logout():
 
 
 if "credentials" not in st.session_state:
-    st.info("Silakan login dulu ya.")
     SCOPES = [
         "https://www.googleapis.com/auth/blogger",
         "https://www.googleapis.com/auth/userinfo.email",
@@ -65,6 +64,7 @@ if "credentials" not in st.session_state:
         st.session_state["user_picture"] = user_info["picture"]
         st.session_state["serial_verified"] = True  # <--- Tambahkan ini      
     else:
+        st.info("Silakan login dulu ya.")
         serial_number()
 
 # Jika sudah login
