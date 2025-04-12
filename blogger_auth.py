@@ -155,25 +155,26 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Tampilan form serial number
-if not st.session_state.serial_verified:
-    st.markdown('<div class="serial-box">', unsafe_allow_html=True)
-    st.markdown("### 🔒 Masukkan Serial Number")
-
-    serial = st.text_input("", placeholder="Contoh: ABC123", key="serial", label_visibility="collapsed")
-
-    if st.button("✅ Verifikasi", key="verify_btn"):
-        if serial in VALID_SERIALS:
-            st.session_state.serial_verified = True
-            st.success("✅ Serial number valid. Silakan lanjut.")
-            st.rerun()
-        else:
-            st.error("❌ Serial number tidak valid. Coba lagi.")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# --- Kalau sudah verified
-else:
-    st.success("✅ Serial number terverifikasi. Akses diberikan!")
-    # lanjut ke aplikasi utama kamu, misal login Google atau dashboard
+def serial_number()
+    # --- Tampilan form serial number
+    if not st.session_state.serial_verified:
+        st.markdown('<div class="serial-box">', unsafe_allow_html=True)
+        st.markdown("### 🔒 Masukkan Serial Number")
+    
+        serial = st.text_input("", placeholder="Contoh: ABC123", key="serial", label_visibility="collapsed")
+    
+        if st.button("✅ Verifikasi", key="verify_btn"):
+            if serial in VALID_SERIALS:
+                st.session_state.serial_verified = True
+                st.success("✅ Serial number valid. Silakan lanjut.")
+                st.rerun()
+            else:
+                st.error("❌ Serial number tidak valid. Coba lagi.")
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    # --- Kalau sudah verified
+    else:
+        st.success("✅ Serial number terverifikasi. Akses diberikan!")
+        # lanjut ke aplikasi utama kamu, misal login Google atau dashboard
 
 
