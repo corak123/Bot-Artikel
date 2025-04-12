@@ -76,13 +76,13 @@ def get_authenticated_service():
             access_type='offline',
             include_granted_scopes='true'
         )
-        st.markdown(f"[🔐 Klik di sini untuk login Google]({auth_url})", unsafe_allow_html=True)
-        st.stop()
-        # auth_url = auth_url
-        # if st.button("🔐 Login dengan Google"):
-        #     st.markdown(f"""
-        #         <meta http-equiv="refresh" content="0; url={auth_url}" />
-        #     """, unsafe_allow_html=True)
-        #     st.stop()
+        # st.markdown(f"[🔐 Klik di sini untuk login Google]({auth_url})", unsafe_allow_html=True)
+        # st.stop()
+        auth_url = auth_url
+        if st.button("🔐 Login dengan Google"):
+            st.markdown(f"""
+                <meta http-equiv="refresh" content="0; url={auth_url}" />
+            """, unsafe_allow_html=True)
+            st.stop()
 
 
