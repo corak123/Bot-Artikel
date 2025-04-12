@@ -1,59 +1,57 @@
-import os
-import base64
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
-import requests
-from PIL import Image
-from io import BytesIO
-import tempfile
+import streamlit as st
 
-def generate_article_and_image(title_prompt, image_prompt):
-    article = f"""<h2>{title_prompt}</h2>
-<p>Artikel otomatis dari Gemini AI tentang topik <strong>{title_prompt}</strong>. Artikel ini disusun untuk SEO dan memberikan informasi mendalam kepada pembaca.</p>
-<p>{title_prompt} adalah topik yang menarik untuk dibahas. Dengan pendekatan AI, kami mencoba memberikan informasi yang relevan dan terkini.</p>
-<p>Simak artikel lengkap di bawah ini!</p>"""
+st.title("🤖 Auto Posting ke Blogger dengan Gemini AI")
+st.markdown("""
+Masukkan topik artikel dan prompt untuk Gemini AI. Bot ini akan:
+1. Menghasilkan artikel otomatis
+2. Menghasilkan gambar otomatis
+3. Artikel SEO Firendly
+4. Posting langsung ke Blogger melalui API
+""")
 
-    image_url = f"https://dummyimage.com/600x400/000/fff&text={image_prompt.replace(' ', '+')}"
-    image_response = requests.get(image_url)
-    image = Image.open(BytesIO(image_response.content))
+user_input = st.text_input("Masukkan judul artikel:")
+user_input_2 = st.text_area("Masukkan keyword gambar:", height=100)
 
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp_img:
-        image.save(temp_img.name)
-        image_path = temp_img.name
+def submit_button():
+    col1, col2 = st.columns(2)
 
-    img_tag = f'<img src="data:image/jpeg;base64,{base64.b64encode(image_response.content).decode()}" alt="{image_prompt}" style="width:100%;height:auto;"/>'
-    full_content = img_tag + article
+    with col1:
+        generate_clicked = st.button("🚀 Generate & Posting")
 
-    return title_prompt, full_content
+    with col2:
+        cancel_clicked = st.button("❌ Batal")
 
-def create_drive_service_from_secrets():
-    from google.oauth2 import service_account
-    from googleapiclient.discovery import build
+    # Jika user klik batal
+    if cancel_clicked:
+        st.session_state["cancelled"] = True
+        st.warning("🚫 Pembuatan artikel dibatalkan.")
+        return  # Stop fungsi agar tidak lanjut ke bawah
 
-    SERVICE_ACCOUNT_FILE = os.getenv("SERVICE_ACCOUNT_FILE", "service_account.json")
-    SCOPES = ["https://www.googleapis.com/auth/drive"]
+    # Jika user klik generate
+    if generate_clicked:
+        # Cek apakah user sebelumnya sudah klik batal
+        if st.session_state.get("cancelled"):
+            st.warning("Aksi dibatalkan. Silakan klik Generate lagi jika ingin memulai.")
+            # Reset cancelled flag agar bisa jalan lagi
+            st.session_state["cancelled"] = False
+            return
 
-    credentials = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+        if not user_input or not user_input_2:
+            st.warning("Harap isi Topik dan Keyword terlebih dahulu.")
+        elif not selected_categories:
+            st.warning("Pilih minimal satu kategori untuk postingan.")
+        else:
+            with st.spinner("Sedang memproses artikel dan memposting ke Blogger..."):
+                try:
+                    # title, content = generate_article_and_image(user_input, user_input_2)
+                    # success, result = post_to_blogger_with_creds(user_input, content, selected_categories, st.session_state.credentials)
+                    
 
-    drive_service = build("drive", "v3", credentials=credentials)
-
-    return credentials, drive_service
-
-def post_to_blogger_with_creds(title, content, labels, credentials):
-    try:
-        service = build("blogger", "v3", credentials=credentials)
-        blogs = service.blogs().listByUser(userId="self").execute()
-        blog_id = blogs["items"][0]["id"]
-
-        body = {
-            "kind": "blogger#post",
-            "title": title,
-            "content": content,
-            "labels": labels,
-        }
-
-        post = service.posts().insert(blogId=blog_id, body=body, isDraft=False).execute()
-        return True, post["url"]
-    except Exception as e:
-        return False, str(e)
+                    if success:
+                        st.success("✅ Artikel berhasil diposting!")
+                        st.write(f"**Link Posting:** [Lihat artikel]({result})")
+                        st.session_state["cancelled"] = False  # Reset batal setelah berhasil
+                    else:
+                        st.error(f"❌ Gagal posting: {result}")
+                except Exception as e:
+                    st.error(f"❌ Terjadi kesalahan: {e} silahkan coba lagi...")
