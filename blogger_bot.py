@@ -1,6 +1,27 @@
 import streamlit as st
 from blogger_auth import get_authenticated_service, serial_number
 
+SCOPES = [
+    "https://www.googleapis.com/auth/blogger",
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "openid"
+]
+
+# Ambil client_id dan client_secret dari st.secrets
+CLIENT_ID = st.secrets["google_oauth"]["client_id"]
+CLIENT_SECRET = st.secrets["google_oauth"]["client_secret"]
+
+client_config = {
+    "web": {
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET,
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "redirect_uris": ["https://bot-artikel-auto.streamlit.app/"]
+    }
+}
+
 #st.set_page_config(page_title="Bot Artikel Blogger Otomatis", page_icon="🤖")
 st.title("🤖 Bot Artikel Blogger Otomatis")
 
