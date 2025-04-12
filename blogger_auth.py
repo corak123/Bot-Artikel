@@ -112,9 +112,9 @@ def get_authenticated_service():
 # --- Daftar serial valid
 VALID_SERIALS = ["ABC123", "XYZ789", "SN-2025-001"]
 
-# --- Cek status verifikasi serial
-if "serial_verified" not in st.session_state:
-    st.session_state.serial_verified = False
+# # --- Cek status verifikasi serial
+# if "serial_verified" not in st.session_state:
+#     st.session_state.serial_verified = False
 
 # --- CSS untuk styling
 st.markdown("""
