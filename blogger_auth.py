@@ -158,7 +158,7 @@ st.markdown("""
 
 def serial_number():
     # --- Tampilan form serial number
-    if not st.session_state.serial_verified:
+    if not st.session_state.serial_verified and not st.session_state.get("credentials"):
         st.markdown('<div class="serial-box">', unsafe_allow_html=True)
         st.markdown("### 🔒 Masukkan Serial Number")
     
