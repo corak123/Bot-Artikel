@@ -23,6 +23,13 @@ def logout():
 
 if "credentials" not in st.session_state:
     st.info("Silakan login dulu ya.")
+    flow = Flow.from_client_config(
+        client_config,
+        scopes=SCOPES,
+        redirect_uri="https://bot-artikel-auto.streamlit.app/"
+    )
+    query_params = st.query_params
+    code = query_params.get("code")
     serial_number()
 
 # Jika sudah login
