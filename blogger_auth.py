@@ -65,10 +65,10 @@ def get_drive_service():
 def get_authenticated_service():
     creds = None
 
-    if "user_email" in st.session_state:
-        creds = load_token_from_drive(st.session_state["user_email"])
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+    # if "user_email" in st.session_state:
+    #     creds = load_token_from_drive(st.session_state["user_email"])
+    #     if creds and creds.expired and creds.refresh_token:
+    #         creds.refresh(Request())
 
     if not creds or not creds.valid:
         # Login OAuth
