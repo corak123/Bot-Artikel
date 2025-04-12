@@ -7,6 +7,15 @@ st.title("🤖 Bot Artikel Blogger Otomatis")
 def login():
     # Simulasi proses login dengan tombol
     if st.button("Login"):
+        # Cek apakah sudah ada auth code dari URL
+        flow = Flow.from_client_config(
+            client_config,
+            scopes=SCOPES,
+            redirect_uri="https://bot-artikel-auto.streamlit.app/"
+        )
+        query_params = st.query_params
+        code = query_params.get("code")
+        st.write("Isi kode:", code)
         auth_url, _ = flow.authorization_url(
             prompt='consent',
             access_type='offline',
@@ -31,7 +40,6 @@ def logout():
 
 if "credentials" not in st.session_state:
     st.info("Silakan login dulu ya.")
-    login()
     get_authenticated_service()
 
 # Jika sudah login
@@ -47,3 +55,4 @@ if "credentials" in st.session_state:
 
     if st.button("🔓 Logout"):
         logout()
+        login()
