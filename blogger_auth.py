@@ -79,13 +79,25 @@ def get_authenticated_service():
         # st.markdown(f"[🔐 Klik di sini untuk login Google]({auth_url})", unsafe_allow_html=True)
         # st.stop()
         # auth_url = auth_url
-        if st.button("🔐 Login dengan Google"):
-            auth_url, _ = flow.authorization_url(
-            prompt='consent',
-            access_type='offline',
-            include_granted_scopes='true'
-            )
-            st.markdown(f"[🔐 Klik di sini untuk login Google]({auth_url})", unsafe_allow_html=True)
-            st.stop()
+        st.markdown(
+            f"""
+            <a href="{auth_url}" target="_self">
+                <button style="
+                    background-color: #4285F4;
+                    color: white;
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 5px;
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    font-size: 16px;
+                    cursor: pointer;
+                ">
+                    🔐 Login dengan Google
+                </button>
+            </a>
+            """,
+            unsafe_allow_html=True)
 
 
