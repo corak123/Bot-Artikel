@@ -76,5 +76,6 @@ def get_authenticated_service():
             access_type='offline',
             include_granted_scopes='true'
         )
+        
         st.markdown(f"[🔐 Klik di sini untuk login Google]({auth_url})", unsafe_allow_html=True)
         st.stop()
