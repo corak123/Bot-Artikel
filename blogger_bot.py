@@ -1,15 +1,5 @@
 import streamlit as st
 from blogger_auth import get_authenticated_service, serial_number, get_user_info
-    response = requests.get(
-        'https://www.googleapis.com/oauth2/v1/userinfo',
-        params={'access_token': creds.token}
-    ).json()
-
-    return {
-        "email": response.get("email", "unknown_user"),
-        "name": response.get("name", "Unknown Name"),
-        "picture": response.get("picture", None)
-    }
 from google_auth_oauthlib.flow import Flow
 from google.auth.transport.requests import Request
 
