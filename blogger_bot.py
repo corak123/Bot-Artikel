@@ -9,6 +9,7 @@ def logout():
     for key in ["credentials", "user_email", "user_name", "user_picture"]:
         if key in st.session_state:
             del st.session_state[key]
+            st.session_state.clear()
     st.success("✅ Kamu berhasil logout.")
     st.rerun()
 
