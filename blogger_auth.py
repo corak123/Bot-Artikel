@@ -76,6 +76,7 @@ def get_authenticated_service():
             access_type='offline',
             include_granted_scopes='true'
         )
-        if st.button(f"🔐 Login Google {auth_url}", unsafe_allow_html=True):
-            st.markdown(f"[🔐 Klik di sini untuk login Google]({auth_url})", unsafe_allow_html=True)
+        if st.button("🔐 Login Google"):
+            st.markdown(f'<meta http-equiv="refresh" content="0;url={auth_url}">', unsafe_allow_html=True)
             st.stop()
+
