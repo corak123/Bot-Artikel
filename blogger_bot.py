@@ -10,6 +10,7 @@ def logout():
         if key in st.session_state:
             del st.session_state[key]
             code = None
+            print("User logged out. Code is now:", code)
     st.success("✅ Kamu berhasil logout.")
     st.rerun()
 
