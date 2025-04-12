@@ -41,6 +41,7 @@ def get_user_info(creds):
 # Fungsi login dan ambil credentials
 def get_authenticated_service():
     creds = None
+    code = None
 
     # Cek apakah sudah ada auth code dari URL
     flow = Flow.from_client_config(
