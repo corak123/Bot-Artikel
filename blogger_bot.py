@@ -25,6 +25,7 @@ def logout():
 
 if "credentials" not in st.session_state:
     st.info("Silakan login dulu ya.")
+    login()
     get_authenticated_service()
 
 # Jika sudah login
