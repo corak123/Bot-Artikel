@@ -14,3 +14,12 @@ picture = st.session_state.get("user_picture")
 
 st.success(f"Hai, {name}!")
 st.image(picture, width=100)
+
+# Tombol Logout
+if st.button("🔓 Logout"):
+    for key in ["credentials", "user_email", "user_name", "user_picture"]:
+        if key in st.session_state:
+            del st.session_state[key]
+    st.success("✅ Kamu berhasil logout.")
+    st.experimental_rerun()
+
