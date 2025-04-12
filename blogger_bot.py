@@ -24,12 +24,6 @@ def logout():
 if "credentials" not in st.session_state:
     st.info("Silakan login dulu ya.")
     serial_number()
-    if st.session_state.serial_verified and "code" in st.query_params:
-        # Misalnya kamu pakai `flow.fetch_token(code=st.query_params["code"])`
-        creds = flow.fetch_token(code=st.query_params["code"])
-        st.session_state.credentials = creds
-        st.success("Berhasil login dengan Google.")
-        st.rerun()
 
 # Jika sudah login
 if "credentials" in st.session_state:
