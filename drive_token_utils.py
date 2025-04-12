@@ -38,7 +38,7 @@ def save_credentials_to_drive(credentials, user_email, drive_service):
     print(f"✅ Token berhasil disimpan untuk {user_email}")
 
 # ✅ Fungsi tambahan: Simpan token ke folder lokal
-def save_credentials_to_local(credentials, user_email, folder="tokens"):
+def save_credentials_to_local(credentials, folder="tokens"):
     os.makedirs(folder, exist_ok=True)
     file_path = os.path.join(folder, f"token_{user_email}.json")
     with open(file_path, "w") as f:
