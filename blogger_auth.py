@@ -98,29 +98,29 @@ def get_authenticated_service():
         st.success("✅ Login Google berhasil!")
         return creds
         
-        query_params = st.query_params
-        if "code" in query_params:
-            code = query_params["code"][0]
-            try:
-                flow.fetch_token(code=code)
-                creds = flow.credentials
+        # query_params = st.query_params
+        # if "code" in query_params:
+        #     code = query_params["code"][0]
+        #     try:
+        #         flow.fetch_token(code=code)
+        #         creds = flow.credentials
         
-                if creds and creds.valid:
-                    user_info = get_user_info(creds)
-                    st.session_state["credentials"] = creds
-                    st.session_state["user_email"] = user_info["email"]
-                    st.session_state["user_name"] = user_info["name"]
-                    st.session_state["user_picture"] = user_info["picture"]
+        #         if creds and creds.valid:
+        #             user_info = get_user_info(creds)
+        #             st.session_state["credentials"] = creds
+        #             st.session_state["user_email"] = user_info["email"]
+        #             st.session_state["user_name"] = user_info["name"]
+        #             st.session_state["user_picture"] = user_info["picture"]
         
-                    upload_token_to_drive(user_info["email"], creds)
-                    save_credentials_to_local(creds, user_info["email"])
+        #             upload_token_to_drive(user_info["email"], creds)
+        #             save_credentials_to_local(creds, user_info["email"])
         
-                    st.success("✅ Login berhasil!")
-                    st.experimental_rerun()
-                else:
-                    st.error("❌ Token tidak valid.")
-            except Exception as e:
-                st.error(f"❌ Gagal ambil token: {e}")
+        #             st.success("✅ Login berhasil!")
+        #             st.experimental_rerun()
+        #         else:
+        #             st.error("❌ Token tidak valid.")
+        #     except Exception as e:
+        #         st.error(f"❌ Gagal ambil token: {e}")
 
     return creds
 
