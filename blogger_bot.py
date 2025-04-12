@@ -53,9 +53,11 @@ if "credentials" not in st.session_state:
     )
     query_params = st.query_params
     code = query_params.get("code")
-    flow.fetch_token(code=code)
-    creds = flow.credentials
-    st.session_state["credentials"] = creds
+    if code:
+        flow.fetch_token(code=code)
+        creds = flow.credentials
+        st.session_state["credentials"] = creds
+    
     serial_number()
 
 # Jika sudah login
