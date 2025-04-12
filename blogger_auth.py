@@ -78,10 +78,19 @@ def get_authenticated_service():
         )
         # st.markdown(f"[🔐 Klik di sini untuk login Google]({auth_url})", unsafe_allow_html=True)
         # st.stop()
+        st.markdown("""
+            <style>
+            .hover-scale:hover {
+                transform: scale(1.2);
+                transition: transform 0.3s ease;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+        
         st.markdown(
             f"""
             <a href="{auth_url}" target="_blank">
-                <button style="
+                <button class="hover-scale" style="
                     background-color: #4285F4;
                     color: white;
                     padding: 10px 20px;
@@ -92,15 +101,13 @@ def get_authenticated_service():
                     display: inline-block;
                     font-size: 16px;
                     cursor: pointer;
-                    .hover-scale:hover {
-                    transform: scale(1.2);
-                    transition: transform 0.3s ease;
-                }
                 ">
                     🔐 Login dengan Google
                 </button>
             </a>
             """,
-            unsafe_allow_html=True)
+            unsafe_allow_html=True
+        )
+
 
 
