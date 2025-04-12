@@ -1,7 +1,7 @@
 import streamlit as st
 from blogger_auth import get_authenticated_service, serial_number
 
-st.set_page_config(page_title="Bot Artikel Blogger Otomatis", page_icon="🤖")
+#st.set_page_config(page_title="Bot Artikel Blogger Otomatis", page_icon="🤖")
 st.title("🤖 Bot Artikel Blogger Otomatis")
 
 # Fungsi Logout
