@@ -7,7 +7,12 @@ st.title("🤖 Bot Artikel Blogger Otomatis")
 def login():
     # Simulasi proses login dengan tombol
     if st.button("Login"):
-        # Biasanya, di sini proses autentikasi, misalnya dengan OAuth atau mekanisme login lainnya
+        auth_url, _ = flow.authorization_url(
+            prompt='consent',
+            access_type='offline',
+            include_granted_scopes='true'
+        )
+        st.markdown(f"[🔐 Klik di sini untuk login Google]({auth_url})", unsafe_allow_html=True)
         # Ini misalnya kode yang didapat setelah login
         st.session_state.code = code  # Simpan code di session_state agar tetap ada selama sesi
         st.success("Login berhasil!")
@@ -21,6 +26,7 @@ def logout():
             del st.session_state[key]
             st.session_state.code = None  # Kosongkan code
     st.success("✅ Kamu berhasil logout.")
+    login()
     st.rerun()
 
 if "credentials" not in st.session_state:
@@ -40,4 +46,3 @@ if "credentials" in st.session_state:
 
     if st.button("🔓 Logout"):
         logout()
-        login()
