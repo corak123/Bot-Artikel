@@ -28,29 +28,30 @@ if "credentials" not in st.session_state:
         with st.spinner("Sedang menyelesaikan proses login..."):
             try:
                 code = query_params["code"][0]
-                if handle_auth_callback(code):
-                    # Simpan token ke Google Drive
-                    try:
-                        drive_service = get_drive_service()
-                        save_credentials_to_drive(
-                            credentials=st.session_state.credentials,
-                            user_email=st.session_state.user_email,
-                            drive_service=drive_service
-                        )
-                        st.success("✅ Token berhasil disimpan di Google Drive!")
-                    except Exception as e:
-                        st.warning(f"⚠️ Token tidak berhasil disimpan: {e}")
-                    # Simpan ke lokal
-                    try:
-                        save_credentials_to_local(
-                            credentials=st.session_state.credentials,
-                            user_email=st.session_state.user_email
-                        )
-                        st.success("✅ Token juga disimpan di komputer lokal!")
-                    except Exception as e:
-                        st.warning(f"⚠️ Gagal simpan token ke lokal: {e}")
-                    st.success("✅ Login berhasil!")
-                    st.experimental_rerun()
+                creds = get_authenticated_service()
+                # if handle_auth_callback(code):
+                #     # Simpan token ke Google Drive
+                #     try:
+                #         drive_service = get_drive_service()
+                #         save_credentials_to_drive(
+                #             credentials=st.session_state.credentials,
+                #             user_email=st.session_state.user_email,
+                #             drive_service=drive_service
+                #         )
+                #         st.success("✅ Token berhasil disimpan di Google Drive!")
+                #     except Exception as e:
+                #         st.warning(f"⚠️ Token tidak berhasil disimpan: {e}")
+                #     # Simpan ke lokal
+                #     try:
+                #         save_credentials_to_local(
+                #             credentials=st.session_state.credentials,
+                #             user_email=st.session_state.user_email
+                #         )
+                #         st.success("✅ Token juga disimpan di komputer lokal!")
+                #     except Exception as e:
+                #         st.warning(f"⚠️ Gagal simpan token ke lokal: {e}")
+                #     st.success("✅ Login berhasil!")
+                #     st.experimental_rerun()
             except Exception as e:
                 st.error(f"Gagal login: {e}")
     else:
