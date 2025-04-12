@@ -51,7 +51,6 @@ def get_authenticated_service():
     )
     query_params = st.query_params
     code = query_params.get("code")
-    st.write("Isi kode:", code)
 
     if code:
         try:
