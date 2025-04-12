@@ -92,6 +92,10 @@ def get_authenticated_service():
                     display: inline-block;
                     font-size: 16px;
                     cursor: pointer;
+                    .hover-scale:hover {
+                    transform: scale(1.2);
+                    transition: transform 0.3s ease;
+                }
                 ">
                     🔐 Login dengan Google
                 </button>
