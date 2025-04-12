@@ -21,5 +21,5 @@ if st.button("🔓 Logout"):
         if key in st.session_state:
             del st.session_state[key]
     st.success("✅ Kamu berhasil logout.")
-    st.experimental_rerun()
+    st.rerun()
 
