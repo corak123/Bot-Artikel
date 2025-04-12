@@ -167,6 +167,7 @@ def serial_number():
             if serial in VALID_SERIALS:
                 st.session_state.serial_verified = True
                 st.success("✅ Serial number valid. Silakan lanjut.")
+                get_authenticated_service()
                 st.rerun()
             else:
                 st.error("❌ Serial number tidak valid. Coba lagi.")
