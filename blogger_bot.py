@@ -68,10 +68,4 @@ else:
     creds = st.session_state.credentials
     st.subheader("✅ Bot Siap Digunakan")
     # Input dari user
-    judul = st.text_input("Masukkan topik artikel", placeholder="Contoh: Teknologi Masa Depan")
-    
-    # Tombol generate
-    if st.button("🚀 Generate Artikel dan Gambar") and judul:
-        title, content = generate_article_and_image(judul, judul)
-        st.markdown(content, unsafe_allow_html=True)
 
