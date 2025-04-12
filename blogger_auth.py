@@ -80,7 +80,7 @@ def get_authenticated_service():
         # st.stop()
         st.markdown(
             f"""
-            <a href="{auth_url}" target="_self">
+            <a href="{auth_url}" target="_blank">
                 <button style="
                     background-color: #4285F4;
                     color: white;
