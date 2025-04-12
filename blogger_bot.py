@@ -29,4 +29,3 @@ if "credentials" in st.session_state:
 
     if st.button("🔓 Logout"):
         logout()
-        get_authenticated_service()
