@@ -33,11 +33,12 @@ def logout():
     for key in ["credentials", "user_email", "user_name", "user_picture", "code"]:
         if key in st.session_state:
             del st.session_state[key]
-    st.success("✅ Kamu berhasil logout.")
-    st.markdown(
-        '<meta http-equiv="refresh" content="0;url=https://bot-artikel-auto.streamlit.app/">',
-        unsafe_allow_html=True
-    )
+            st.success("✅ Kamu berhasil logout.")
+            st.markdown(
+                '<meta http-equiv="refresh" content="0;url=https://bot-artikel-auto.streamlit.app/">',
+                unsafe_allow_html=True
+            )
+            st.stop()
     st.rerun()
 
 
