@@ -169,6 +169,7 @@ def serial_number():
                 st.success("✅ Serial number valid. Silakan lanjut.")
                 #st.rerun()
                 get_authenticated_service()
+                st.stop()
             else:
                 st.error("❌ Serial number tidak valid. Coba lagi.")
         st.markdown('</div>', unsafe_allow_html=True)
