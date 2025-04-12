@@ -30,13 +30,16 @@ def login():
 
 # Fungsi Logout
 def logout():
-    for key in ["credentials", "user_email", "user_name", "user_picture"]:
+    for key in ["credentials", "user_email", "user_name", "user_picture", "code"]:
         if key in st.session_state:
             del st.session_state[key]
-            st.session_state.code = None  # Kosongkan code
+
+    # Hapus parameter `code` dari URL
+    st.experimental_set_query_params()
+
     st.success("✅ Kamu berhasil logout.")
-    login()
     st.rerun()
+
 
 if "credentials" not in st.session_state:
     st.info("Silakan login dulu ya.")
