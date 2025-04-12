@@ -58,4 +58,6 @@ if "credentials" in st.session_state:
 
     if st.button("🔓 Logout"):
         logout()
-        login()
+        st.markdown('<meta http-equiv="refresh" content="0;url=https://bot-artikel-auto.streamlit.app/">', unsafe_allow_html=True)
+        st.stop()
+
