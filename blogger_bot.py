@@ -7,8 +7,8 @@ st.title("🤖 Bot Artikel Blogger Otomatis")
 # --- Inisialisasi session state ---
 if "serial_verified" not in st.session_state:
     st.session_state.serial_verified = None
-if "credentials" not in st.session_state:
-    st.session_state.credentials = None
+# if "credentials" not in st.session_state:
+#     st.session_state.credentials = None
 
 # Fungsi Logout
 def logout():
