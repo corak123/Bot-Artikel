@@ -39,6 +39,9 @@ def logout():
 
     st.success("✅ Kamu berhasil logout.")
     st.rerun()
+    st.markdown('<meta http-equiv="refresh" content="0;url=https://bot-artikel-auto.streamlit.app/">', unsafe_allow_html=True)
+    st.stop()
+
 
 
 if "credentials" not in st.session_state:
