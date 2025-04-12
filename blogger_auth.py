@@ -77,6 +77,6 @@ def get_authenticated_service():
             include_granted_scopes='true'
         )
         if st.button("🔐 Login Google"):
-            st.markdown(f'<meta http-equiv="refresh" content="0;url={auth_url}">', unsafe_allow_html=True)
+            st.markdown(f'<meta content="0;url={auth_url}">', unsafe_allow_html=True)
             st.stop()
 
