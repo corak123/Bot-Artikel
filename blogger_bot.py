@@ -4,6 +4,12 @@ from blogger_auth import get_authenticated_service
 st.set_page_config(page_title="Bot Artikel Blogger Otomatis", page_icon="🤖")
 st.title("🤖 Bot Artikel Blogger Otomatis")
 
+# Fungsi Logout
+def logout():
+    st.session_state.clear()
+    st.success("✅ Kamu berhasil logout.")
+    st.rerun()
+
 if "credentials" not in st.session_state:
     st.info("Silakan login dulu ya.")
     get_authenticated_service()
