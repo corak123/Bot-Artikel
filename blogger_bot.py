@@ -1,5 +1,5 @@
 import streamlit as st
-from blogger_auth import get_authenticated_service
+from blogger_auth import get_authenticated_service, serial_number
 
 st.set_page_config(page_title="Bot Artikel Blogger Otomatis", page_icon="🤖")
 st.title("🤖 Bot Artikel Blogger Otomatis")
@@ -19,6 +19,7 @@ def logout():
 
 if "credentials" not in st.session_state:
     st.info("Silakan login dulu ya.")
+    serial_number()
     get_authenticated_service()
 
 # Jika sudah login
