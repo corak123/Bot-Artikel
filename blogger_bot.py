@@ -33,15 +33,8 @@ def logout():
     for key in ["credentials", "user_email", "user_name", "user_picture", "code"]:
         if key in st.session_state:
             del st.session_state[key]
-
-    # Hapus parameter `code` dari URL
-    st.query_params
-
     st.success("✅ Kamu berhasil logout.")
     st.rerun()
-    st.markdown('<meta http-equiv="refresh" content="0;url=https://bot-artikel-auto.streamlit.app/">', unsafe_allow_html=True)
-    st.stop()
-
 
 
 if "credentials" not in st.session_state:
@@ -61,6 +54,4 @@ if "credentials" in st.session_state:
 
     if st.button("🔓 Logout"):
         logout()
-        st.markdown('<meta http-equiv="refresh" content="0;url=https://bot-artikel-auto.streamlit.app/">', unsafe_allow_html=True)
-        st.stop()
 
