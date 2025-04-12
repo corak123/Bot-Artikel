@@ -21,8 +21,7 @@ if "credentials" not in st.session_state:
     st.info("Silakan login dulu ya.")
     st.session_state.serial_verified = False
     serial_number()
-    if st.session_state.serial_verified:
-        get_authenticated_service()
+    #get_authenticated_service()
 
 # Jika sudah login
 if "credentials" in st.session_state:
