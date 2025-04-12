@@ -3,7 +3,12 @@ from blogger_auth import get_authenticated_service, serial_number
 
 #st.set_page_config(page_title="Bot Artikel Blogger Otomatis", page_icon="🤖")
 st.title("🤖 Bot Artikel Blogger Otomatis")
-st.session_state.serial_verified = None
+
+# --- Inisialisasi session state ---
+if "serial_verified" not in st.session_state:
+    st.session_state.serial_verified = None
+if "credentials" not in st.session_state:
+    st.session_state.credentials = None
 
 # Fungsi Logout
 def logout():
