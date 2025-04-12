@@ -107,7 +107,6 @@ def get_authenticated_service():
             """,
             unsafe_allow_html=True
         )
-        st.stop()
 
 
 # --- Daftar serial valid
