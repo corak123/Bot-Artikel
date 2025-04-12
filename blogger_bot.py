@@ -6,7 +6,9 @@ st.title("🤖 Bot Artikel Blogger Otomatis")
 
 # Fungsi Logout
 def logout():
-    st.session_state.clear()
+    for key in ["credentials", "user_email", "user_name", "user_picture"]:
+        if key in st.session_state:
+            del st.session_state[key]
     st.success("✅ Kamu berhasil logout.")
     st.rerun()
 
