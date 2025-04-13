@@ -48,8 +48,8 @@ st.markdown("""
         /* Ubah ukuran sidebar sebenarnya */
         section[data-testid="stSidebar"] {
             min-width: 0px;
-            max-width: 200px;
-            width: 200px;
+            max-width: 100px;
+            width: 100px;
         }
 
         /* Supaya kontennya ikut muat */
