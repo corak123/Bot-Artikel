@@ -23,6 +23,11 @@ GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 # Inisialisasi client
 client = genai.Client(api_key=GEMINI_API_KEY)
 FOLDER_ID = st.secrets["google_drive"]["FOLDER_ID"]
+# Autentikasi dengan service account
+SCOPES = ["https://www.googleapis.com/auth/drive.file"]
+SERVICE_ACCOUNT_FILE = st.secrets["gcp_service_account"]
+creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+service = build("drive", "v3", credentials=creds)
 
 def get_unique_filename(base_name, extension):
     counter = 1
