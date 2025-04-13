@@ -23,6 +23,14 @@ GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 # Inisialisasi client
 client = genai.Client(api_key=GEMINI_API_KEY)
 
+def get_unique_filename(base_name, extension):
+    counter = 1
+    file_name = f"{base_name}{extension}"
+    while os.path.exists(file_name):
+        file_name = f"{base_name}_{counter}{extension}"
+        counter += 1
+    return file_name
+
 def generate_article_and_image(user_input, user_input_2):
     try:
         # Generate artikel
