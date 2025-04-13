@@ -80,6 +80,6 @@ if "credentials" in st.session_state:
         st.image(picture, width=100)
 
     UI()
-    if st.button("🔓 Logout"):
-        logout()
+    # if st.button("🔓 Logout"):
+    #     logout()
 
