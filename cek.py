@@ -70,6 +70,62 @@ def upload_to_drive(file_path, file_name):
     # Mengembalikan direct link yang bisa digunakan di <img>
     direct_link = f"https://lh3.googleusercontent.com/d/{file_id}=s0"
     return direct_link
+    
+def format_content(article_text):
+    # Pisahkan artikel berdasarkan baris dan hapus 5 baris pertama
+    lines = article_text.split("\n")
+    article_text = "\n".join(lines[3:]).strip()  # Ambil baris ke-4 dan seterusnya
+
+    # Gantilah **teks** dengan <strong>teks</strong> tanpa terkena indentasi
+    def replace_bold(match):
+        return f"<strong style='display: inline;'>{match.group(1)}</strong>"
+
+    formatted_text = re.sub(r"\*\*(.*?)\*\*", replace_bold, article_text)
+
+    def replace_italic(match):
+        return f"<em style='display: inline;'>{match.group(1)}</em>"
+
+    # Kemudian ganti *italic*
+    formatted_text = re.sub(r"\*(.*?)\*", replace_italic, formatted_text)
+
+    # Bold nomor di awal kalimat (contoh: "1. ", "2) ")
+    def replace_numbering(match):
+        return f"<strong style='display: inline;'>{match.group(1)}</strong>{match.group(2)}"
+
+    formatted_text = re.sub(r"^(\d+[.)])(\s+)", replace_numbering, formatted_text, flags=re.MULTILINE)
+
+
+    # Konversi bullet list dengan `*` di awal baris menjadi `•` atau <ul><li>
+    paragraphs = formatted_text.split("\n")
+    formatted_paragraphs = []
+    in_list = False  # Menandai apakah sedang berada dalam daftar
+
+    for p in paragraphs:
+        p = p.strip()
+        if not p:
+            continue  # Lewati baris kosong
+
+        if p.startswith("*"):  # Jika dimulai dengan '*', ubah ke bullet list
+            if not in_list:
+                formatted_paragraphs.append("<ul style='margin-left: 1rem;'>")  # Mulai daftar
+                in_list = True
+            formatted_paragraphs.append(f"<li>{p[1:].strip()}</li>")  # Simpan sebagai list item
+        else:
+            if in_list:
+                formatted_paragraphs.append("</ul>")  # Tutup daftar jika sebelumnya dalam daftar
+                in_list = False
+            
+            # Hapus indentasi jika paragraf diawali <strong>
+            if re.match(r"^\s*<strong", p):  
+                formatted_paragraphs.append(f"<p style='margin-bottom: 1em;'>{p}</p>")
+            else:
+                formatted_paragraphs.append(f"<p style='margin-bottom: 1em; text-indent: 2rem;'>{p}</p>")
+
+    if in_list:
+        formatted_paragraphs.append("</ul>")  # Pastikan daftar ditutup
+
+    return "".join(formatted_paragraphs)
+
 
 def ensure_landscape(image):
     width, height = image.size
