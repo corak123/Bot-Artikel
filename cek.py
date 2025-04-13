@@ -59,3 +59,5 @@ def UI():
                         st.error(f"❌ Terjadi kesalahan: {e} silahkan coba lagi...")
 
     submit_button()
+    if st.button("🔓 Logout"):
+        logout()
