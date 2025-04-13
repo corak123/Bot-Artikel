@@ -11,6 +11,44 @@ def logout():
             st.stop()
     st.rerun()
 
+GEMINI_API_KEY = 
+def generate_article_and_image(user_input, user_input_2):
+    try:
+        # Generate artikel
+        article_response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=f"Tulis artikel 850 kata dengan bahasa yang santai, human like, tentang: {user_input} . Artikel harus SEO-Friendly"
+        )
+        article_text = article_response.text
+        formatted_content = "".join(f"<p>{line}</p>" for line in article_text.split("\n") if line.strip())
+    except Exception as e:
+        raise RuntimeError(f"Gagal generate artikel: {e}")
+
+    image_url_1 = None
+    image_url_2 = None
+
+    try:
+        # Generate gambar pertama
+        image_prompt_1 = f"Buat gambar wide aspect ratio 16:9 berdasarkan keyword: {user_input_2}"
+        image_response_1 = client.models.generate_content(
+            model="gemini-2.0-flash-exp-image-generation",
+            contents=image_prompt_1,
+            config=types.GenerateContentConfig(response_modalities=['Text', 'Image'])
+        )
+        image_path_1 = get_unique_filename("generated_image_1", ".png")
+        for part in image_response_1.candidates[0].content.parts:
+            if hasattr(part, "inline_data") and part.inline_data:
+                image = Image.open(BytesIO(part.inline_data.data))
+                image = ensure_landscape(image)
+                image.save(image_path_1)
+                image_url_1 = upload_to_drive(image_path_1, os.path.basename(image_path_1))
+                break  # Stop setelah gambar pertama ditemukan
+        if not image_url_1:
+            raise ValueError("Gambar pertama tidak ditemukan di response Gemini.")
+    except Exception as e:
+        raise RuntimeError(f"Gagal generate gambar pertama: {e}")
+
+
 def UI():
     st.title("🤖 Auto Posting ke Blogger dengan Gemini AI")
     st.markdown("""
