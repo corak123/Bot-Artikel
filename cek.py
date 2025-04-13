@@ -51,13 +51,14 @@ st.markdown("""
         border-radius: 12px;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         text-align: center;
-        max-width: 150px;
-        align-items: center;
     }
     .sidebar-profil img {
         border-radius: 50%;
         margin-bottom: 10px;
         border: 3px solid #3498db;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
     }
     .sidebar-profil .name {
         font-size: 18px;
@@ -75,9 +76,10 @@ st.markdown("""
         color: white;
         padding: 8px 16px;
         border-radius: 8px;
-        text-decoration: none;
-        display: inline-block;
         font-size: 14px;
+        display: inline-block;
+        text-align: center;
+        margin: 10px auto;
     }
     </style>
 """, unsafe_allow_html=True)
