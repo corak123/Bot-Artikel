@@ -41,6 +41,22 @@ def get_unique_filename(base_name, extension):
         counter += 1
     return file_name
 
+def post_to_blogger_with_creds(title, content, categories, creds):
+    try:
+        service = build('blogger', 'v3', credentials=creds)
+        user_info = service.users().get(userId='self').execute()
+        blog_id = service.blogs().listByUser(userId='self').execute()['items'][0]['id']
+        
+        post = {
+            "title": title,
+            "content": content,
+            "labels": categories
+        }
+        response = service.posts().insert(blogId=blog_id, body=post, isDraft=False).execute()
+        return True, response['url']
+    except Exception as e:
+        return False, str(e)
+
 def extract_title(article_text):
     # Pisahkan artikel berdasarkan baris
     lines = article_text.split("\n")
