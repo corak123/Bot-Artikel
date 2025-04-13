@@ -31,6 +31,12 @@ def get_unique_filename(base_name, extension):
         counter += 1
     return file_name
 
+def ensure_landscape(image):
+    width, height = image.size
+    if height > width:
+        image = image.rotate(90, expand=True)
+    return image
+
 def generate_article_and_image(user_input, user_input_2):
     try:
         # Generate artikel
