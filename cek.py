@@ -41,6 +41,46 @@ def get_unique_filename(base_name, extension):
         counter += 1
     return file_name
 
+def get_blog_categories():
+    if "credentials" not in st.session_state:
+        st.error("Anda harus login terlebih dahulu.")
+        return []
+    
+    creds = st.session_state.credentials
+    access_token = creds.token
+
+    # Ambil blog ID user yang sedang login
+    user_info_url = "https://www.googleapis.com/blogger/v3/users/self/blogs"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    user_response = requests.get(user_info_url, headers=headers)
+
+    if user_response.status_code != 200:
+        st.error("Gagal mengambil informasi blog user.")
+        return []
+
+    blogs = user_response.json().get("items", [])
+    if not blogs:
+        st.warning("User ini belum punya blog.")
+        return []
+
+    # Ambil blog ID pertama dari daftar blog user
+    blog_id = blogs[0]["id"]
+
+    # Lanjutkan ambil kategori dari blog tersebut
+    posts_url = f"https://www.googleapis.com/blogger/v3/blogs/{blog_id}/posts?maxResults=10"
+    posts_response = requests.get(posts_url, headers=headers)
+
+    if posts_response.status_code == 200:
+        posts = posts_response.json().get("items", [])
+        labels = set()
+        for post in posts:
+            if "labels" in post:
+                labels.update(post["labels"])
+        return list(labels)
+    else:
+        st.error("Gagal mengambil postingan blog.")
+        return []
+
 def post_to_blogger_with_creds(title, content, categories, creds):
     try:
         service = build('blogger', 'v3', credentials=creds)
