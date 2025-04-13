@@ -1,5 +1,4 @@
 import streamlit as st
-#from blogger_bot import logout
 
 def logout():
     for key in ["credentials", "user_email", "user_name", "user_picture", "code"]:
