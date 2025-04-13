@@ -313,9 +313,7 @@ def UI():
                 with st.spinner("Sedang memproses artikel dan memposting ke Blogger..."):
                     try:
                         title, content = generate_article_and_image(user_input, user_input_2)
-                        success, result = post_to_blogger_with_creds(user_input, content, selected_categories, st.session_state.credentials)
-                        st.info("Berhasil cuyyy.")
-    
+                        success, result = post_to_blogger_with_creds(user_input, content, selected_categories, st.session_state.credentials)    
                         if success:
                             st.success("✅ Artikel berhasil diposting!")
                             st.write(f"**Link Posting:** [Lihat artikel]({result})")
