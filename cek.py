@@ -7,6 +7,8 @@ import base64
 import os
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
+from google.oauth2 import service_account
+
 
 def logout():
     for key in ["credentials", "user_email", "user_name", "user_picture", "code"]:
