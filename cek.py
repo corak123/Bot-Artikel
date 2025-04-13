@@ -42,6 +42,20 @@ def get_unique_filename(base_name, extension):
         counter += 1
     return file_name
 
+# 🖼️ Sidebar Profil
+def sidebar_profile():
+    with st.sidebar:
+        st.markdown("## 👤 Profil")
+        if "user_picture" in st.session_state and st.session_state.user_picture:
+            st.image(st.session_state.user_picture, width=80)
+        if "user_name" in st.session_state:
+            st.markdown(f"**{st.session_state.user_name}**")
+        if "user_email" in st.session_state:
+            st.caption(st.session_state.user_email)
+        st.markdown("---")
+        if st.button("🚪 Logout", key="sidebar_logout"):
+            logout()
+
 def get_blog_categories():
     if "credentials" not in st.session_state:
         st.error("Anda harus login terlebih dahulu.")
@@ -324,5 +338,6 @@ def UI():
                         st.error(f"❌ Terjadi kesalahan: {e} silahkan coba lagi...")
 
     submit_button()
+    sidebar_profile()
     if st.button("🔓 Logout"):
         logout()
