@@ -1,6 +1,17 @@
 import streamlit as st
 #from blogger_bot import logout
 
+def logout():
+    for key in ["credentials", "user_email", "user_name", "user_picture", "code"]:
+        if key in st.session_state:
+            del st.session_state[key]
+            st.markdown(
+                '<meta http-equiv="refresh" content="0;url=https://bot-artikel-auto.streamlit.app/">',
+                unsafe_allow_html=True
+            )
+            st.stop()
+    st.rerun()
+
 def UI():
     st.title("🤖 Auto Posting ke Blogger dengan Gemini AI")
     st.markdown("""
@@ -59,6 +70,6 @@ def UI():
                     except Exception as e:
                         st.error(f"❌ Terjadi kesalahan: {e} silahkan coba lagi...")
 
-    # submit_button()
-    # if st.button("🔓 Logout"):
-    #     logout()
+    submit_button()
+    if st.button("🔓 Logout"):
+        logout()
