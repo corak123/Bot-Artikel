@@ -78,7 +78,6 @@ if "credentials" in st.session_state:
     st.success(f"Hai, {name}!")
     if picture:
         st.image(picture, width=100)
-
     UI()
     #fff
 
