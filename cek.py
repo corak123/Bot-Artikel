@@ -5,6 +5,7 @@ from PIL import Image
 from io import BytesIO
 import base64
 import os
+import json
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.oauth2 import service_account
@@ -28,7 +29,7 @@ FOLDER_ID = st.secrets["google_drive"]["FOLDER_ID"]
 # Autentikasi dengan service account
 SCOPES = ["https://www.googleapis.com/auth/drive.file"]
 SERVICE_ACCOUNT_FILE = st.secrets["gcp_service_account"]
-creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+creds = service_account.Credentials.from_service_account_info(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 service = build("drive", "v3", credentials=creds)
 
 def get_unique_filename(base_name, extension):
