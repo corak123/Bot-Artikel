@@ -22,6 +22,7 @@ def logout():
 GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 # Inisialisasi client
 client = genai.Client(api_key=GEMINI_API_KEY)
+FOLDER_ID = st.secrets["google_drive"]["FOLDER_ID"]
 
 def get_unique_filename(base_name, extension):
     counter = 1
@@ -30,6 +31,29 @@ def get_unique_filename(base_name, extension):
         file_name = f"{base_name}_{counter}{extension}"
         counter += 1
     return file_name
+
+def upload_to_drive(file_path, file_name):
+    # Metadata file yang akan diupload
+    file_metadata = {'name': file_name, 'parents': [FOLDER_ID]}
+    media = MediaFileUpload(file_path, mimetype='image/png')
+
+    # Mengunggah file ke Google Drive
+    file = service.files().create(body=file_metadata, media_body=media, fields="id").execute()
+    
+    # Mendapatkan ID file yang baru diupload
+    file_id = file.get('id')
+    print(f"File berhasil diunggah ke Google Drive dengan ID: {file_id}")
+    
+    # Menambahkan izin akses publik (bisa dibaca oleh siapa saja)
+    service.permissions().create(
+        fileId=file_id,
+        body={'role': 'reader', 'type': 'anyone'}
+    ).execute()
+    print(f"File {file_name} sekarang dapat diakses secara publik.")
+    
+    # Mengembalikan direct link yang bisa digunakan di <img>
+    direct_link = f"https://lh3.googleusercontent.com/d/{file_id}=s0"
+    return direct_link
 
 def ensure_landscape(image):
     width, height = image.size
