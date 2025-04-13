@@ -307,8 +307,8 @@ def UI():
     
             if not user_input or not user_input_2:
                 st.warning("Harap isi Topik dan Keyword terlebih dahulu.")
-            # elif not selected_categories:
-            #     st.warning("Pilih minimal satu kategori untuk postingan.")
+            elif not selected_categories:
+                st.warning("Pilih minimal satu kategori untuk postingan.")
             else:
                 with st.spinner("Sedang memproses artikel dan memposting ke Blogger..."):
                     try:
@@ -318,7 +318,7 @@ def UI():
     
                         if success:
                             st.success("✅ Artikel berhasil diposting!")
-                            # st.write(f"**Link Posting:** [Lihat artikel]({result})")
+                            st.write(f"**Link Posting:** [Lihat artikel]({result})")
                             st.session_state["cancelled"] = False  # Reset batal setelah berhasil
                         else:
                             st.error(f"❌ Gagal posting: {result}")
