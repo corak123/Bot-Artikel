@@ -40,6 +40,14 @@ def get_unique_filename(base_name, extension):
         counter += 1
     return file_name
 
+def extract_title(article_text):
+    # Pisahkan artikel berdasarkan baris
+    lines = article_text.split("\n")
+    
+    # Ambil baris pertama sebagai judul (baris pertama setelah menghapus 5 baris pertama)
+    title = lines[2].split(":")[0].strip()  # Ambil judul dari baris ke-6
+    return title
+
 def upload_to_drive(file_path, file_name):
     # Metadata file yang akan diupload
     file_metadata = {'name': file_name, 'parents': [FOLDER_ID]}
