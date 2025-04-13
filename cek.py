@@ -42,6 +42,28 @@ def get_unique_filename(base_name, extension):
         counter += 1
     return file_name
 
+# 🔧 CSS untuk mengatur lebar sidebar
+st.markdown("""
+    <style>
+        /* Ubah ukuran sidebar sebenarnya */
+        section[data-testid="stSidebar"] {
+            min-width: 0px;
+            max-width: 200px;
+            width: 200px;
+        }
+
+        /* Supaya kontennya ikut muat */
+        section[data-testid="stSidebar"] > div:first-child {
+            width: 200px;
+        }
+
+        /* (Opsional) agar konten utama tidak terlalu sempit */
+        div[data-testid="stAppViewContainer"] > div:nth-child(1) {
+            margin-left: 320px;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # 🖼️ Sidebar Profil
 def sidebar_profile():
     with st.sidebar:
