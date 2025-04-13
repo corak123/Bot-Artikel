@@ -277,7 +277,8 @@ def UI():
     
     user_input = st.text_input("Masukkan judul artikel:")
     user_input_2 = st.text_area("Masukkan keyword gambar:", height=100)
-    #creds = st.session_state.credentials
+    categories = get_blog_categories()
+    selected_categories = st.multiselect("Pilih kategori untuk postingan:", options=categories)
     
     def submit_button():
         col1, col2 = st.columns(2)
