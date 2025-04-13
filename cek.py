@@ -5,6 +5,8 @@ from PIL import Image
 from io import BytesIO
 import base64
 import os
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
 
 def logout():
     for key in ["credentials", "user_email", "user_name", "user_picture", "code"]:
@@ -18,6 +20,9 @@ def logout():
     st.rerun()
 
 GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
+# Inisialisasi client
+client = genai.Client(api_key=GEMINI_API_KEY)
+
 def generate_article_and_image(user_input, user_input_2):
     try:
         # Generate artikel
