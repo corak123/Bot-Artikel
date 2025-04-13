@@ -105,6 +105,44 @@ def generate_article_and_image(user_input, user_input_2):
     except Exception as e:
         raise RuntimeError(f"Gagal generate gambar pertama: {e}")
 
+    try:
+        # Generate gambar kedua
+        image_prompt_2 = f"Buat gambar wide aspect ratio 16:9 yang lain berdasarkan keyword: {user_input_2}"
+        image_response_2 = client.models.generate_content(
+            model="gemini-2.0-flash-exp-image-generation",
+            contents=image_prompt_2,
+            config=types.GenerateContentConfig(response_modalities=['Text', 'Image'])
+        )
+        image_path_2 = get_unique_filename("generated_image_2", ".png")
+        for part in image_response_2.candidates[0].content.parts:
+            if hasattr(part, "inline_data") and part.inline_data:
+                image = Image.open(BytesIO(part.inline_data.data))
+                image = ensure_landscape(image)
+                image.save(image_path_2)
+                image_url_2 = upload_to_drive(image_path_2, os.path.basename(image_path_2))
+                break
+        if not image_url_2:
+            raise ValueError("Gambar kedua tidak ditemukan di response Gemini.")
+    except Exception as e:
+        raise RuntimeError(f"Gagal generate gambar kedua: {e}")
+
+    try:
+        # Siapkan konten untuk Blogger
+        title = extract_title(article_text)
+        formatted_content = format_content(article_text)
+        blogger_content = f"""
+        <h1 style='text-align: center;'>{user_input}</h1>
+        <br>
+        <img src='{image_url_1}' alt='{user_input}' style='margin-bottom: 1rem;'>
+        <br>
+        {formatted_content}
+        <img src='{image_url_2}' alt='{user_input_2}' style='margin-bottom: 1rem;'>
+        <br>
+        """
+        return title, blogger_content
+    except Exception as e:
+        raise RuntimeError(f"Gagal menyiapkan konten Blogger: {e}")
+
 
 def UI():
     st.title("🤖 Auto Posting ke Blogger dengan Gemini AI")
