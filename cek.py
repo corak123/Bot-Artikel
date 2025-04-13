@@ -11,7 +11,7 @@ def logout():
             st.stop()
     st.rerun()
 
-GEMINI_API_KEY = 
+GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 def generate_article_and_image(user_input, user_input_2):
     try:
         # Generate artikel
