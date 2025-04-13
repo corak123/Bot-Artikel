@@ -74,10 +74,8 @@ if "credentials" in st.session_state:
     name = st.session_state.get("user_name", "kamu")
     email = st.session_state.get("user_email")
     #picture = st.session_state.get("user_picture")
-
     st.success(f"Hai, {name}!")
-    if picture:
-        st.image(picture, width=100)
+    # if picture:
+    #     st.image(picture, width=100)
     UI()
-    #fff
 
