@@ -45,38 +45,59 @@ def get_unique_filename(base_name, extension):
 # 🔧 CSS untuk mengatur lebar sidebar
 st.markdown("""
     <style>
-        /* Ubah ukuran sidebar sebenarnya */
-        section[data-testid="stSidebar"] {
-            min-width: 0px;
-            max-width: 100px;
-            width: 100px;
-        }
-
-        /* Supaya kontennya ikut muat */
-        section[data-testid="stSidebar"] > div:first-child {
-            width: 200px;
-        }
-
-        /* (Opsional) agar konten utama tidak terlalu sempit */
-        div[data-testid="stAppViewContainer"] > div:nth-child(1) {
-            margin-left: 320px;
-        }
+    .sidebar-profil {
+        background-color: #f0f4f8;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    .sidebar-profil img {
+        border-radius: 50%;
+        margin-bottom: 10px;
+        border: 3px solid #3498db;
+    }
+    .sidebar-profil .name {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 4px;
+    }
+    .sidebar-profil .email {
+        font-size: 13px;
+        color: #7f8c8d;
+        margin-bottom: 12px;
+    }
+    .sidebar-profil .logout-button {
+        background-color: #e74c3c;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+    }
     </style>
 """, unsafe_allow_html=True)
+
 
 # 🖼️ Sidebar Profil
 def sidebar_profile():
     with st.sidebar:
-        st.markdown("## 👤 Profil")
+        st.markdown("## 🖼️ Sidebar Profil", unsafe_allow_html=True)
+        st.markdown('<div class="sidebar-profil">', unsafe_allow_html=True)
+
         if "user_picture" in st.session_state and st.session_state.user_picture:
-            st.image(st.session_state.user_picture, width=80)
+            st.markdown(f'<img src="{st.session_state.user_picture}" width="80">', unsafe_allow_html=True)
         if "user_name" in st.session_state:
-            st.markdown(f"**{st.session_state.user_name}**")
+            st.markdown(f'<div class="name">{st.session_state.user_name}</div>', unsafe_allow_html=True)
         if "user_email" in st.session_state:
-            st.caption(st.session_state.user_email)
-        st.markdown("---")
+            st.markdown(f'<div class="email">{st.session_state.user_email}</div>', unsafe_allow_html=True)
+
         if st.button("🚪 Logout", key="sidebar_logout"):
             logout()
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
 def get_blog_categories():
     if "credentials" not in st.session_state:
