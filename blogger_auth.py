@@ -162,7 +162,7 @@ def serial_number():
         st.markdown('<div class="serial-box">', unsafe_allow_html=True)
         st.markdown("### 🔒 Masukkan Serial Number")
     
-        serial = st.text_input("", placeholder="Contoh: ABC123", key="serial", label_visibility="collapsed")
+        serial = st.text_input("Masukan Serial Number", placeholder="Contoh: ABC123", key="serial", label_visibility="collapsed")
     
         if st.button("✅ Verifikasi", key="verify_btn"):
             if serial in VALID_SERIALS:
