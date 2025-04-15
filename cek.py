@@ -247,10 +247,16 @@ def format_content(article_text):
     return "".join(formatted_paragraphs)
 
 
-def ensure_landscape(image):
+def ensure_landscape(image, max_width=1024, max_height=768):
+    # Rotate kalau gambar portrait
     width, height = image.size
     if height > width:
         image = image.rotate(90, expand=True)
+        width, height = image.size  # update ukuran setelah rotasi
+
+    # Resize gambar kalau lebih besar dari batas
+    if width > max_width or height > max_height:
+        image.thumbnail((max_width, max_height), resample=Image.LANCZOS)
     return image
 
 def generate_article_and_image(user_input, user_input_2):
